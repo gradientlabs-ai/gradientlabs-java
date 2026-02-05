@@ -245,6 +245,21 @@ public class GradientLabsClient {
         httpClient.delete(path, Void.class);
     }
 
+    /**
+     * Executes a tool to enable testing.
+     * <p>
+     * Note: requires a Management API key.
+     *
+     * @param toolId  the tool ID
+     * @param request the execution parameters
+     * @return the execution result (check {@link ToolExecuteResult#isSuccess()} to see if it succeeded)
+     * @throws GradientLabsException if the request fails
+     */
+    public ToolExecuteResult executeTool(String toolId, ToolExecuteRequest request) {
+        String path = String.format("/tools/%s/execute", toolId);
+        return httpClient.post(path, request, ToolExecuteResult.class);
+    }
+
     // ==================== Webhook Operations ====================
 
     /**
