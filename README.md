@@ -349,6 +349,89 @@ client.setArticleUsageStatus(
 client.deleteArticle("change-address");
 ```
 
+### Procedures
+
+**Note:** All procedure operations require a Management API key.
+
+```java
+import ai.gradientlabs.client.model.Procedure;
+import ai.gradientlabs.client.model.ProcedureStatus;
+import ai.gradientlabs.client.model.ProcedureVersion;
+import ai.gradientlabs.client.request.ListProceduresRequest;
+import ai.gradientlabs.client.request.SetProcedureLimitRequest;
+import ai.gradientlabs.client.request.SetProcedureExperimentVersionRequest;
+import ai.gradientlabs.client.ProcedureListResponse;
+import ai.gradientlabs.client.ListProcedureVersionsResponse;
+
+// List all procedures
+ProcedureListResponse response = client.listProcedures(
+    ListProceduresRequest.empty()
+);
+
+// List only live procedures
+ProcedureListResponse liveProcs = client.listProcedures(
+    ListProceduresRequest.builder()
+        .status(ProcedureStatus.LIVE)
+        .build()
+);
+
+// Paginate through results
+if (response.getPagination().getNext() != null) {
+    ProcedureListResponse nextPage = client.listProcedures(
+        ListProceduresRequest.builder()
+            .cursor(response.getPagination().getNext())
+            .build()
+    );
+}
+
+// Read a specific procedure
+Procedure proc = client.readProcedure("procedure-123");
+
+// Set daily usage limit
+Procedure updated = client.setProcedureLimit(
+    "procedure-123",
+    SetProcedureLimitRequest.builder()
+        .hasDailyLimit(true)
+        .maxDailyConversations(500)
+        .build()
+);
+
+// Remove daily limit
+client.setProcedureLimit(
+    "procedure-123",
+    SetProcedureLimitRequest.builder()
+        .hasDailyLimit(false)
+        .build()
+);
+
+// List procedure versions
+ListProcedureVersionsResponse versions = client.listProcedureVersions("procedure-123");
+for (ProcedureVersion version : versions.getVersions()) {
+    System.out.println("Version " + version.getVersion() +
+        " - Live: " + version.isLive() +
+        ", Experimental: " + version.isExperimental());
+}
+
+// Set experimental version (for gradual rollout)
+client.setProcedureExperimentVersion(
+    "procedure-123",
+    2,  // version number
+    SetProcedureExperimentVersionRequest.builder()
+        .maxDailyConversations(100)
+        .replace(true)  // Replace existing experiment
+        .build()
+);
+
+// Unset experimental version
+client.unsetProcedureExperimentVersion("procedure-123", 2);
+
+// Set live version
+client.setProcedureLiveVersion("procedure-123", 3);
+
+// Unset live version
+client.unsetProcedureLiveVersion("procedure-123", 3);
+```
+
 ## Async API
 
 All methods that make HTTP requests have async variants:
@@ -446,6 +529,7 @@ See the `examples/` directory for complete working examples:
 - [Notes Example](examples/NotesExample.java) - Creating and managing notes
 - [Hand-Off Targets Example](examples/HandOffTargetsExample.java) - Managing hand-off targets for conversation routing
 - [Articles Example](examples/ArticlesExample.java) - Managing articles and topics for the knowledge base
+- [Procedures Example](examples/ProceduresExample.java) - Managing procedures and versions for AI agent instructions
 
 ## Contributing
 

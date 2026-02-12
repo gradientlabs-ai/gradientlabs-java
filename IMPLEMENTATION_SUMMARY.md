@@ -124,16 +124,24 @@ Uses Java 11+ `HttpClient` with:
    - `ResponseException.java`
    - `InvalidWebhookSignatureException.java`
 
-4. **Models** (18 files)
+4. **Models** (24 files)
    - `Conversation.java`, `AgentMetadata.java`
    - `Message.java`, `Attachment.java`
    - `Tool.java`, `Note.java`
    - `HandOffTarget.java`, `HandOffTargetsResponse.java`
+   - `Procedure.java`, `ProcedureVersion.java`
+   - `UserDetails.java`, `ExperimentalConfig.java`
+   - `PaginationInfo.java`
    - `Channel.java`, `ConversationStatus.java`, `NoteStatus.java`
    - `ParticipantType.java`, `AttachmentType.java`
    - `Visibility.java`, `PublicationStatus.java`, `UsageStatus.java`
+   - `ProcedureStatus.java`
 
-5. **Request Objects** (17 files)
+4a. **Response Classes** (2 files, in client package)
+   - `ProcedureListResponse.java` - Wraps procedures list with pagination
+   - `ListProcedureVersionsResponse.java` - Wraps procedure versions list
+
+5. **Request Objects** (20 files)
    - `StartConversationRequest.java`
    - `AddMessageRequest.java`
    - `AssignmentRequest.java`
@@ -151,6 +159,9 @@ Uses Java 11+ `HttpClient` with:
    - `UpsertArticleRequest.java`
    - `UpsertArticleTopicRequest.java`
    - `SetArticleUsageStatusRequest.java`
+   - `ListProceduresRequest.java`
+   - `SetProcedureLimitRequest.java`
+   - `SetProcedureExperimentVersionRequest.java`
 
 6. **Webhook Handling** (9 files)
    - `Webhook.java`, `WebhookType.java`
@@ -172,13 +183,14 @@ Uses Java 11+ `HttpClient` with:
 - `IMPLEMENTATION_SUMMARY.md` - This file
 - `.gitignore` - Git ignore rules
 
-### Examples (5 files)
+### Examples (6 files)
 
 - `BasicConversationExample.java` - Complete conversation flow
 - `WebhookHandlerExample.java` - Webhook handling
 - `NotesExample.java` - Note management operations
 - `HandOffTargetsExample.java` - Hand-off target management
 - `ArticlesExample.java` - Article and topic management for knowledge base
+- `ProceduresExample.java` - Procedure and version management for AI agent instructions
 
 ## API Coverage
 
@@ -210,6 +222,15 @@ Uses Java 11+ `HttpClient` with:
 - Support for publication status (draft/published)
 - Requires Integration API key
 
+✅ **Procedures**
+- List, Read (with pagination and filtering)
+- Set Limit (daily usage limits)
+- List Versions
+- Set/Unset Experiment Version (gradual rollout)
+- Set/Unset Live Version
+- Support for experimental and live version management
+- Requires Management API key
+
 ✅ **Webhooks**
 - Parse and verify
 - All event types (agent.message, conversation.hand_off, etc.)
@@ -217,7 +238,6 @@ Uses Java 11+ `HttpClient` with:
 ### Future Enhancements
 
 The following could be added in future versions:
-- Procedures API
 - Resource Sources/Types API
 - List Notes operation (with filtering/pagination)
 - Pagination helpers for list operations
