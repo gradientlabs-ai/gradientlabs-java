@@ -14,7 +14,81 @@ Java client library for the [Gradient Labs API](https://api-docs.gradient-labs.a
 - Zero runtime dependencies (except Jackson)
 - Synchronous and asynchronous APIs
 
-## Installation
+## Spring Boot Integration
+
+For Spring Boot applications, use the starter dependency for zero-configuration setup:
+
+### Maven
+
+```xml
+<dependency>
+    <groupId>ai.gradientlabs</groupId>
+    <artifactId>gradient-labs-spring-boot-starter</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+### Gradle
+
+```gradle
+implementation 'ai.gradientlabs:gradient-labs-spring-boot-starter:1.0.0'
+```
+
+### Configuration
+
+Configure in your `application.yml`:
+
+```yaml
+gradientlabs:
+  api-key: ${GLABS_API_KEY}
+  base-url: https://api.gradient-labs.ai  # optional
+  webhook-signing-key: ${GLABS_WEBHOOK_KEY}  # optional
+  webhook-leeway: 10m  # optional, defaults to 5m
+```
+
+Or in `application.properties`:
+
+```properties
+gradientlabs.api-key=${GLABS_API_KEY}
+gradientlabs.base-url=https://api.gradient-labs.ai
+gradientlabs.webhook-signing-key=${GLABS_WEBHOOK_KEY}
+gradientlabs.webhook-leeway=10m
+```
+
+### Usage
+
+The client will be automatically configured and available for dependency injection:
+
+```java
+import ai.gradientlabs.client.GradientLabsClient;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ConversationService {
+
+    private final GradientLabsClient client;
+
+    public ConversationService(GradientLabsClient client) {
+        this.client = client;
+    }
+
+    public void startConversation(String customerId) {
+        Conversation conv = client.startConversation(
+            StartConversationRequest.builder()
+                .id("conv-" + UUID.randomUUID())
+                .customerId(customerId)
+                .channel(Channel.CHAT)
+                .build()
+        );
+    }
+}
+```
+
+See the [Spring Boot Starter README](gradient-labs-spring-boot-starter/README.md) for more details.
+
+## Installation (Standalone)
+
+For non-Spring applications, use the core client library:
 
 ### Maven
 
@@ -30,406 +104,6 @@ Java client library for the [Gradient Labs API](https://api-docs.gradient-labs.a
 
 ```gradle
 implementation 'ai.gradientlabs:gradient-labs-client:1.0.0'
-```
-
-## Quick Start
-
-### Creating a Client
-
-```java
-import ai.gradientlabs.client.GradientLabsClient;
-
-GradientLabsClient client = GradientLabsClient.builder()
-    .apiKey(System.getenv("GLABS_API_KEY"))
-    .webhookSigningKey(System.getenv("GLABS_WEBHOOK_KEY"))
-    .build();
-```
-
-### Starting a Conversation
-
-```java
-import ai.gradientlabs.client.model.*;
-import ai.gradientlabs.client.request.StartConversationRequest;
-import java.util.Map;
-
-StartConversationRequest request = StartConversationRequest.builder()
-    .id("conversation-1234")
-    .customerId("user-1234")
-    .channel(Channel.CHAT)
-    .addMetadata("source", "web")
-    .addResource("user_profile", Map.of(
-        "name", "Jane Doe",
-        "subscription", "premium"
-    ))
-    .build();
-
-Conversation conversation = client.startConversation(request);
-System.out.println("Started conversation: " + conversation.getId());
-```
-
-### Adding a Message
-
-```java
-import ai.gradientlabs.client.request.AddMessageRequest;
-import java.time.Instant;
-
-AddMessageRequest messageRequest = AddMessageRequest.builder()
-    .id("message-1234")
-    .body("Hello! I need help with my order.")
-    .participantId("user-1234")
-    .participantType(ParticipantType.CUSTOMER)
-    .created(Instant.now())
-    .addMetadata("device_os", "iOS 17")
-    .build();
-
-Message message = client.addMessage(conversation.getId(), messageRequest);
-```
-
-### Assigning to AI Agent
-
-```java
-import ai.gradientlabs.client.request.AssignmentRequest;
-
-client.assignConversation(
-    conversation.getId(),
-    AssignmentRequest.builder()
-        .assigneeType(ParticipantType.AI_AGENT)
-        .build()
-);
-```
-
-### Handling Webhooks
-
-```java
-import ai.gradientlabs.client.webhook.*;
-import ai.gradientlabs.client.webhook.event.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-@PostMapping("/webhooks/gradient-labs")
-public void handleWebhook(HttpServletRequest request, HttpServletResponse response) {
-    try {
-        Webhook webhook = client.parseWebhook(request);
-
-        switch (webhook.getType()) {
-            case AGENT_MESSAGE:
-                AgentMessageEvent event = webhook.asAgentMessage();
-                System.out.println("Agent says: " + event.getBody());
-                // Send message to customer...
-                break;
-
-            case CONVERSATION_HANDOFF:
-                ConversationHandOffEvent handoff = webhook.asConversationHandOff();
-                System.out.println("Handoff to: " + handoff.getTarget());
-                System.out.println("Note: " + handoff.getNote());
-                // Route to human agent...
-                break;
-
-            case CONVERSATION_FINISHED:
-                ConversationFinishedEvent finished = webhook.asConversationFinished();
-                System.out.println("Conversation finished: " +
-                    finished.getConversation().getId());
-                // Close ticket...
-                break;
-
-            case ACTION_EXECUTE:
-                ActionExecuteEvent action = webhook.asActionExecute();
-                // Execute the action...
-                break;
-
-            case RESOURCE_PULL:
-                ResourcePullEvent pull = webhook.asResourcePull();
-                // Fetch and return resource...
-                break;
-        }
-
-        response.setStatus(HttpServletResponse.SC_OK);
-    } catch (InvalidWebhookSignatureException e) {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    } catch (Exception e) {
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    }
-}
-```
-
-## API Operations
-
-### Conversations
-
-```java
-// Start a conversation
-Conversation conv = client.startConversation(request);
-
-// Read a conversation
-Conversation conv = client.readConversation("conv-123", ReadConversationRequest.empty());
-
-// Add a message
-Message msg = client.addMessage("conv-123", messageRequest);
-
-// Assign to participant
-client.assignConversation("conv-123", assignmentRequest);
-
-// Add an event
-client.addConversationEvent("conv-123", eventRequest);
-
-// Finish a conversation
-client.finishConversation("conv-123", FinishConversationRequest.empty());
-
-// Cancel a conversation
-client.cancelConversation("conv-123");
-
-// Resume a conversation
-client.resumeConversation("conv-123");
-
-// Rate a conversation
-client.rateConversation("conv-123", 5);
-```
-
-### Tools
-
-```java
-// List tools
-List<Tool> tools = client.listTools();
-
-// Create a tool
-Tool tool = client.createTool(createRequest);
-
-// Read a tool
-Tool tool = client.readTool("tool-123");
-
-// Update a tool
-Tool tool = client.updateTool("tool-123", updateRequest);
-
-// Delete a tool
-client.deleteTool("tool-123");
-```
-
-### Notes
-
-```java
-import ai.gradientlabs.client.model.Note;
-import ai.gradientlabs.client.model.NoteStatus;
-import ai.gradientlabs.client.request.CreateNoteRequest;
-import ai.gradientlabs.client.request.UpdateNoteRequest;
-import ai.gradientlabs.client.request.SetNoteStatusRequest;
-import java.time.Duration;
-import java.time.Instant;
-
-// Create a note
-Note note = client.createNote(
-    CreateNoteRequest.builder()
-        .externalId("note-001")
-        .title("Support Hours")
-        .body("Our support team is available Monday-Friday, 9am-5pm EST")
-        .startTime(Instant.now())
-        .endTime(Instant.now().plus(Duration.ofDays(365)))
-        .build()
-);
-
-// Update a note
-Note updated = client.updateNote(
-    note.getId(),
-    UpdateNoteRequest.builder()
-        .title("Updated Support Hours")
-        .body("Our support team is now available 24/7")
-        .build()
-);
-
-// Set note status
-client.setNoteStatus(
-    note.getId(),
-    SetNoteStatusRequest.builder()
-        .status(NoteStatus.LIVE)
-        .build()
-);
-
-// Delete a note
-client.deleteNote(note.getId());
-```
-
-### Hand-Off Targets
-
-**Note:** All hand-off target operations require a Management API key.
-
-```java
-import ai.gradientlabs.client.model.Channel;
-import ai.gradientlabs.client.model.HandOffTarget;
-import ai.gradientlabs.client.request.UpsertHandOffTargetRequest;
-import ai.gradientlabs.client.request.DeleteHandOffTargetRequest;
-import ai.gradientlabs.client.request.SetDefaultHandOffTargetRequest;
-import java.util.List;
-
-// List all hand-off targets
-List<HandOffTarget> targets = client.listHandOffTargets();
-
-// Create or update a hand-off target
-client.upsertHandOffTarget(
-    UpsertHandOffTargetRequest.builder()
-        .id("support-team")
-        .name("Customer Support Team")
-        .build()
-);
-
-// Set default hand-off target for a channel
-client.setDefaultHandOffTarget(
-    SetDefaultHandOffTargetRequest.builder()
-        .id("support-team")
-        .channel(Channel.CHAT)
-        .build()
-);
-
-// Clear default hand-off target (set to empty string)
-client.setDefaultHandOffTarget(
-    SetDefaultHandOffTargetRequest.builder()
-        .id("")
-        .channel(Channel.EMAIL)
-        .build()
-);
-
-// Delete a hand-off target (fails if target is in use)
-client.deleteHandOffTarget(
-    DeleteHandOffTargetRequest.builder()
-        .id("support-team")
-        .build()
-);
-```
-
-### Articles
-
-**Note:** All article operations require an Integration API key.
-
-```java
-import ai.gradientlabs.client.model.*;
-import ai.gradientlabs.client.request.*;
-import java.time.Instant;
-
-// Create or update a topic
-client.upsertArticleTopic(
-    UpsertArticleTopicRequest.builder()
-        .id("account-management")
-        .name("Account Management")
-        .description("How to manage your account")
-        .visibility(Visibility.PUBLIC)
-        .status(PublicationStatus.PUBLISHED)
-        .created(Instant.now())
-        .lastEdited(Instant.now())
-        .build()
-);
-
-// Create or update an article
-client.upsertArticle(
-    UpsertArticleRequest.builder()
-        .id("change-address")
-        .authorId("author@example.com")
-        .title("Change my address")
-        .description("Learn how to update your address")
-        .body("Go to settings and tap 'update my address.'")
-        .visibility(Visibility.PUBLIC)
-        .topicId("account-management")
-        .status(PublicationStatus.PUBLISHED)
-        .created(Instant.now())
-        .lastEdited(Instant.now())
-        .addData("reading_time", "2 minutes")
-        .build()
-);
-
-// Set article usage status (enable for AI agent)
-client.setArticleUsageStatus(
-    "change-address",
-    new SetArticleUsageStatusRequest(UsageStatus.ON)
-);
-
-// Disable article from AI agent use
-client.setArticleUsageStatus(
-    "change-address",
-    new SetArticleUsageStatusRequest(UsageStatus.OFF)
-);
-
-// Delete an article
-client.deleteArticle("change-address");
-```
-
-### Procedures
-
-**Note:** All procedure operations require a Management API key.
-
-```java
-import ai.gradientlabs.client.model.Procedure;
-import ai.gradientlabs.client.model.ProcedureStatus;
-import ai.gradientlabs.client.model.ProcedureVersion;
-import ai.gradientlabs.client.request.ListProceduresRequest;
-import ai.gradientlabs.client.request.SetProcedureLimitRequest;
-import ai.gradientlabs.client.request.SetProcedureExperimentVersionRequest;
-import ai.gradientlabs.client.ProcedureListResponse;
-import ai.gradientlabs.client.ListProcedureVersionsResponse;
-
-// List all procedures
-ProcedureListResponse response = client.listProcedures(
-    ListProceduresRequest.empty()
-);
-
-// List only live procedures
-ProcedureListResponse liveProcs = client.listProcedures(
-    ListProceduresRequest.builder()
-        .status(ProcedureStatus.LIVE)
-        .build()
-);
-
-// Paginate through results
-if (response.getPagination().getNext() != null) {
-    ProcedureListResponse nextPage = client.listProcedures(
-        ListProceduresRequest.builder()
-            .cursor(response.getPagination().getNext())
-            .build()
-    );
-}
-
-// Read a specific procedure
-Procedure proc = client.readProcedure("procedure-123");
-
-// Set daily usage limit
-Procedure updated = client.setProcedureLimit(
-    "procedure-123",
-    SetProcedureLimitRequest.builder()
-        .hasDailyLimit(true)
-        .maxDailyConversations(500)
-        .build()
-);
-
-// Remove daily limit
-client.setProcedureLimit(
-    "procedure-123",
-    SetProcedureLimitRequest.builder()
-        .hasDailyLimit(false)
-        .build()
-);
-
-// List procedure versions
-ListProcedureVersionsResponse versions = client.listProcedureVersions("procedure-123");
-for (ProcedureVersion version : versions.getVersions()) {
-    System.out.println("Version " + version.getVersion() +
-        " - Live: " + version.isLive() +
-        ", Experimental: " + version.isExperimental());
-}
-
-// Set experimental version (for gradual rollout)
-client.setProcedureExperimentVersion(
-    "procedure-123",
-    2,  // version number
-    SetProcedureExperimentVersionRequest.builder()
-        .maxDailyConversations(100)
-        .replace(true)  // Replace existing experiment
-        .build()
-);
-
-// Unset experimental version
-client.unsetProcedureExperimentVersion("procedure-123", 2);
-
-// Set live version
-client.setProcedureLiveVersion("procedure-123", 3);
-
-// Unset live version
-client.unsetProcedureLiveVersion("procedure-123", 3);
 ```
 
 ## Async API

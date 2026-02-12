@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: gradient-labs-spring-boot-example
+
+server:
+  port: 8080
+
+# Gradient Labs Configuration
+# The starter auto-configures the GradientLabsClient from these properties
+gradientlabs:
+  # Required: API key for authenticating with Gradient Labs
+  # Set via environment variable: export GLABS_API_KEY=your-api-key
+  api-key: ${GLABS_API_KEY}
+
+  # Optional: Base URL for the API (defaults to https://api.gradient-labs.ai)
+  base-url: https://api.gradient-labs.ai
+
+  # Optional: Webhook signing key for signature verification
+  # Set via environment variable: export GLABS_WEBHOOK_KEY=your-webhook-key
+  webhook-signing-key: ${GLABS_WEBHOOK_KEY:}
+
+  # Optional: Maximum age of webhooks to accept (defaults to 5 minutes)
+  # Can use ISO-8601 format (PT10M) or simple format (10m)
+  webhook-leeway: 10m
+
+  # Optional: Enable/disable auto-configuration (defaults to true)
+  enabled: true
+
+# Logging configuration
+logging:
+  level:
+    ai.gradientlabs: DEBUG
+    ai.gradientlabs.example.springboot: DEBUG
