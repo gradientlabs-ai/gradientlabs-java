@@ -1,4 +1,6 @@
 # Gradient Labs Java Client
+[![Maven Central](https://img.shields.io/maven-central/v/ai.gradientlabs/gradient-labs-client.svg)](https://central.sonatype.com/artifact/ai.gradientlabs/gradient-labs-client)
+[![Javadoc](https://javadoc.io/badge2/ai.gradientlabs/gradient-labs-client/javadoc.svg)](https://javadoc.io/doc/ai.gradientlabs/gradient-labs-client)
 
 Java client library for the [Gradient Labs API](https://api-docs.gradient-labs.ai).
 
@@ -202,6 +204,49 @@ Tool tool = client.updateTool("tool-123", updateRequest);
 client.deleteTool("tool-123");
 ```
 
+### Notes
+
+```java
+import ai.gradientlabs.client.model.Note;
+import ai.gradientlabs.client.model.NoteStatus;
+import ai.gradientlabs.client.request.CreateNoteRequest;
+import ai.gradientlabs.client.request.UpdateNoteRequest;
+import ai.gradientlabs.client.request.SetNoteStatusRequest;
+import java.time.Duration;
+import java.time.Instant;
+
+// Create a note
+Note note = client.createNote(
+    CreateNoteRequest.builder()
+        .externalId("note-001")
+        .title("Support Hours")
+        .body("Our support team is available Monday-Friday, 9am-5pm EST")
+        .startTime(Instant.now())
+        .endTime(Instant.now().plus(Duration.ofDays(365)))
+        .build()
+);
+
+// Update a note
+Note updated = client.updateNote(
+    note.getId(),
+    UpdateNoteRequest.builder()
+        .title("Updated Support Hours")
+        .body("Our support team is now available 24/7")
+        .build()
+);
+
+// Set note status
+client.setNoteStatus(
+    note.getId(),
+    SetNoteStatusRequest.builder()
+        .status(NoteStatus.LIVE)
+        .build()
+);
+
+// Delete a note
+client.deleteNote(note.getId());
+```
+
 ## Async API
 
 All methods that make HTTP requests have async variants:
@@ -294,9 +339,9 @@ GradientLabsClient client = GradientLabsClient.builder()
 
 See the `examples/` directory for complete working examples:
 
-- [Basic Conversation](examples/BasicConversation.java) - Starting and managing conversations
-- [Webhook Handler](examples/WebhookHandler.java) - Handling webhook events
-- [Tool Management](examples/ToolManagement.java) - Creating and managing tools
+- [Basic Conversation](examples/BasicConversationExample.java) - Starting and managing conversations
+- [Webhook Handler](examples/WebhookHandlerExample.java) - Handling webhook events
+- [Notes Example](examples/NotesExample.java) - Creating and managing notes
 
 ## Contributing
 
