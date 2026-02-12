@@ -418,6 +418,123 @@ public class GradientLabsClient {
         return CompletableFuture.runAsync(() -> setDefaultHandOffTarget(request));
     }
 
+    // ==================== Article Operations ====================
+
+    /**
+     * Creates or updates an article.
+     * <p>
+     * Articles are documents that the AI agent can work with to answer customer questions.
+     * If an article with the given ID already exists, it will be updated.
+     * Otherwise, a new article will be created.
+     * <p>
+     * <strong>Note:</strong> Requires an Integration API key.
+     *
+     * @param request the article parameters
+     * @throws GradientLabsException if the request fails
+     */
+    public void upsertArticle(UpsertArticleRequest request) {
+        httpClient.post("/articles", request, Void.class);
+    }
+
+    /**
+     * Creates or updates an article asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires an Integration API key.
+     *
+     * @param request the article parameters
+     * @return a future that completes when the operation finishes
+     */
+    public CompletableFuture<Void> upsertArticleAsync(UpsertArticleRequest request) {
+        return CompletableFuture.runAsync(() -> upsertArticle(request));
+    }
+
+    /**
+     * Creates or updates an article topic.
+     * <p>
+     * Topics enable you to categorize your help articles into groups.
+     * If a topic with the given ID already exists, it will be updated.
+     * Otherwise, a new topic will be created.
+     * <p>
+     * <strong>Note:</strong> Requires an Integration API key.
+     *
+     * @param request the topic parameters
+     * @throws GradientLabsException if the request fails
+     */
+    public void upsertArticleTopic(UpsertArticleTopicRequest request) {
+        httpClient.post("/topics", request, Void.class);
+    }
+
+    /**
+     * Creates or updates an article topic asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires an Integration API key.
+     *
+     * @param request the topic parameters
+     * @return a future that completes when the operation finishes
+     */
+    public CompletableFuture<Void> upsertArticleTopicAsync(UpsertArticleTopicRequest request) {
+        return CompletableFuture.runAsync(() -> upsertArticleTopic(request));
+    }
+
+    /**
+     * Sets an article's usage status.
+     * <p>
+     * Use this to make an article available or unavailable for use by the AI agent.
+     * When set to ON, the article will be available for use. When set to OFF,
+     * the article will not be used by the AI agent.
+     * <p>
+     * <strong>Note:</strong> Requires an Integration API key.
+     *
+     * @param articleId the article ID
+     * @param request   the usage status parameters
+     * @throws GradientLabsException if the request fails
+     */
+    public void setArticleUsageStatus(String articleId, SetArticleUsageStatusRequest request) {
+        String path = String.format("/articles/%s/usage-status", articleId);
+        httpClient.post(path, request, Void.class);
+    }
+
+    /**
+     * Sets an article's usage status asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires an Integration API key.
+     *
+     * @param articleId the article ID
+     * @param request   the usage status parameters
+     * @return a future that completes when the operation finishes
+     */
+    public CompletableFuture<Void> setArticleUsageStatusAsync(String articleId, SetArticleUsageStatusRequest request) {
+        return CompletableFuture.runAsync(() -> setArticleUsageStatus(articleId, request));
+    }
+
+    /**
+     * Deletes an article.
+     * <p>
+     * Marks an article as deleted. Copies of the article are kept in case
+     * they are needed to render citations.
+     * <p>
+     * <strong>Note:</strong> Requires an Integration API key.
+     *
+     * @param articleId the article ID
+     * @throws GradientLabsException if the request fails
+     */
+    public void deleteArticle(String articleId) {
+        String path = String.format("/articles/%s", articleId);
+        httpClient.delete(path, Void.class);
+    }
+
+    /**
+     * Deletes an article asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires an Integration API key.
+     *
+     * @param articleId the article ID
+     * @return a future that completes when the operation finishes
+     */
+    public CompletableFuture<Void> deleteArticleAsync(String articleId) {
+        return CompletableFuture.runAsync(() -> deleteArticle(articleId));
+    }
+
     // ==================== Webhook Operations ====================
 
     /**
