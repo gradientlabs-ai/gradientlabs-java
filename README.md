@@ -247,6 +247,53 @@ client.setNoteStatus(
 client.deleteNote(note.getId());
 ```
 
+### Hand-Off Targets
+
+**Note:** All hand-off target operations require a Management API key.
+
+```java
+import ai.gradientlabs.client.model.Channel;
+import ai.gradientlabs.client.model.HandOffTarget;
+import ai.gradientlabs.client.request.UpsertHandOffTargetRequest;
+import ai.gradientlabs.client.request.DeleteHandOffTargetRequest;
+import ai.gradientlabs.client.request.SetDefaultHandOffTargetRequest;
+import java.util.List;
+
+// List all hand-off targets
+List<HandOffTarget> targets = client.listHandOffTargets();
+
+// Create or update a hand-off target
+client.upsertHandOffTarget(
+    UpsertHandOffTargetRequest.builder()
+        .id("support-team")
+        .name("Customer Support Team")
+        .build()
+);
+
+// Set default hand-off target for a channel
+client.setDefaultHandOffTarget(
+    SetDefaultHandOffTargetRequest.builder()
+        .id("support-team")
+        .channel(Channel.CHAT)
+        .build()
+);
+
+// Clear default hand-off target (set to empty string)
+client.setDefaultHandOffTarget(
+    SetDefaultHandOffTargetRequest.builder()
+        .id("")
+        .channel(Channel.EMAIL)
+        .build()
+);
+
+// Delete a hand-off target (fails if target is in use)
+client.deleteHandOffTarget(
+    DeleteHandOffTargetRequest.builder()
+        .id("support-team")
+        .build()
+);
+```
+
 ## Async API
 
 All methods that make HTTP requests have async variants:
@@ -342,6 +389,7 @@ See the `examples/` directory for complete working examples:
 - [Basic Conversation](examples/BasicConversationExample.java) - Starting and managing conversations
 - [Webhook Handler](examples/WebhookHandlerExample.java) - Handling webhook events
 - [Notes Example](examples/NotesExample.java) - Creating and managing notes
+- [Hand-Off Targets Example](examples/HandOffTargetsExample.java) - Managing hand-off targets for conversation routing
 
 ## Contributing
 

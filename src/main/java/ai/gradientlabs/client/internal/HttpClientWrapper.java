@@ -123,6 +123,20 @@ public class HttpClientWrapper {
         }
     }
 
+    public <T> T delete(String path, Object body, Class<T> responseType) {
+        try {
+            HttpRequest request = buildRequest("DELETE", path, body)
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return handleResponse(response, responseType);
+        } catch (ResponseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new GradientLabsException("Request failed", e);
+        }
+    }
+
     private HttpRequest.Builder buildRequest(String method, String path, Object body) {
         try {
             URI uri = URI.create(path);
