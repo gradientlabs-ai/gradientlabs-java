@@ -260,6 +260,55 @@ public class GradientLabsClient {
         return httpClient.post(path, request, ToolExecuteResult.class);
     }
 
+    // ==================== Note Operations ====================
+
+    /**
+     * Creates a new note.
+     *
+     * @param request the note creation parameters
+     * @return the created note
+     * @throws GradientLabsException if the request fails
+     */
+    public Note createNote(CreateNoteRequest request) {
+        return httpClient.post("/notes", request, Note.class);
+    }
+
+    /**
+     * Updates an existing note's contents.
+     *
+     * @param noteId  the note ID
+     * @param request the update parameters
+     * @return the updated note
+     * @throws GradientLabsException if the request fails
+     */
+    public Note updateNote(String noteId, UpdateNoteRequest request) {
+        String path = String.format("/notes/%s", noteId);
+        return httpClient.post(path, request, Note.class);
+    }
+
+    /**
+     * Marks a note as deleted.
+     *
+     * @param noteId the note ID
+     * @throws GradientLabsException if the request fails
+     */
+    public void deleteNote(String noteId) {
+        String path = String.format("/notes/%s", noteId);
+        httpClient.delete(path, Void.class);
+    }
+
+    /**
+     * Updates a note's status.
+     *
+     * @param noteId  the note ID
+     * @param request the status update parameters
+     * @throws GradientLabsException if the request fails
+     */
+    public void setNoteStatus(String noteId, SetNoteStatusRequest request) {
+        String path = String.format("/notes/%s/status", noteId);
+        httpClient.post(path, request, Void.class);
+    }
+
     // ==================== Webhook Operations ====================
 
     /**
