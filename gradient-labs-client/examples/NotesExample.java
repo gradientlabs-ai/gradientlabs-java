@@ -24,7 +24,6 @@ public class NotesExample {
                 .id("note-001")
                 .title("Important Product Update")
                 .body("We are launching a new feature next week. Please inform customers about the enhanced dashboard.")
-                .authorId("author-123")
                 .startTime(Instant.now())
                 .endTime(Instant.now().plus(30, ChronoUnit.DAYS))
                 .build();
@@ -37,7 +36,6 @@ public class NotesExample {
                 .id("note-002")
                 .title("Product Documentation")
                 .webpageUrl("https://docs.example.com/product-guide")
-                .authorId("author-123")
                 .build();
 
         Note webpageNote = client.createNote(webpageNoteRequest);
@@ -47,7 +45,6 @@ public class NotesExample {
         UpdateNoteRequest updateRequest = UpdateNoteRequest.builder()
                 .title("Updated: Important Product Update")
                 .body("We are launching TWO new features next week. Please inform customers about the enhanced dashboard and analytics.")
-                .authorId("author-456")
                 .build();
 
         Note updatedNote = client.updateNote("note-001", updateRequest);
