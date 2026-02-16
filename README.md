@@ -12,7 +12,6 @@ Java client library for the [Gradient Labs API](https://api-docs.gradient-labs.a
 - Comprehensive error handling
 - Java 11+ compatible
 - Zero runtime dependencies (except Jackson)
-- Synchronous and asynchronous APIs
 
 ## Spring Boot Integration
 
@@ -104,23 +103,6 @@ For non-Spring applications, use the core client library:
 
 ```gradle
 implementation 'ai.gradientlabs:gradient-labs-client:1.0.0'
-```
-
-## Async API
-
-All methods that make HTTP requests have async variants:
-
-```java
-import java.util.concurrent.CompletableFuture;
-
-CompletableFuture<Conversation> future = client.startConversationAsync(request);
-
-future.thenAccept(conversation -> {
-    System.out.println("Conversation started: " + conversation.getId());
-}).exceptionally(error -> {
-    System.err.println("Error: " + error.getMessage());
-    return null;
-});
 ```
 
 ## Error Handling
