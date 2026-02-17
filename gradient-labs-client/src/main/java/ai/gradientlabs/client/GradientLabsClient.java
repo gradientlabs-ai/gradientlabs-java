@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Main client for interacting with the Gradient Labs API.
@@ -78,16 +77,6 @@ public class GradientLabsClient {
      */
     public Conversation startConversation(StartConversationRequest request) {
         return httpClient.post("/conversations", request, Conversation.class);
-    }
-
-    /**
-     * Starts a new conversation asynchronously.
-     *
-     * @param request the conversation parameters
-     * @return a future that completes with the created conversation
-     */
-    public CompletableFuture<Conversation> startConversationAsync(StartConversationRequest request) {
-        return httpClient.postAsync("/conversations", request, Conversation.class);
     }
 
     /**
@@ -328,17 +317,6 @@ public class GradientLabsClient {
     }
 
     /**
-     * Lists all hand-off targets asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @return a future that completes with the list of hand-off targets
-     */
-    public CompletableFuture<List<HandOffTarget>> listHandOffTargetsAsync() {
-        return CompletableFuture.supplyAsync(this::listHandOffTargets);
-    }
-
-    /**
      * Creates or updates a hand-off target.
      * <p>
      * If a hand-off target with the given ID already exists, it will be updated.
@@ -351,18 +329,6 @@ public class GradientLabsClient {
      */
     public void upsertHandOffTarget(UpsertHandOffTargetRequest request) {
         httpClient.post("/hand-off-targets", request, Void.class);
-    }
-
-    /**
-     * Creates or updates a hand-off target asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @param request the hand-off target parameters
-     * @return a future that completes when the operation finishes
-     */
-    public CompletableFuture<Void> upsertHandOffTargetAsync(UpsertHandOffTargetRequest request) {
-        return CompletableFuture.runAsync(() -> upsertHandOffTarget(request));
     }
 
     /**
@@ -380,18 +346,6 @@ public class GradientLabsClient {
     }
 
     /**
-     * Deletes a hand-off target asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @param request the delete parameters
-     * @return a future that completes when the operation finishes
-     */
-    public CompletableFuture<Void> deleteHandOffTargetAsync(DeleteHandOffTargetRequest request) {
-        return CompletableFuture.runAsync(() -> deleteHandOffTarget(request));
-    }
-
-    /**
      * Sets the default hand-off target for a channel.
      * <p>
      * Sets the default hand-off target that the AI agent will use when handing off
@@ -404,18 +358,6 @@ public class GradientLabsClient {
      */
     public void setDefaultHandOffTarget(SetDefaultHandOffTargetRequest request) {
         httpClient.put("/hand-off-targets/default", request, Void.class);
-    }
-
-    /**
-     * Sets the default hand-off target for a channel asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @param request the default target parameters
-     * @return a future that completes when the operation finishes
-     */
-    public CompletableFuture<Void> setDefaultHandOffTargetAsync(SetDefaultHandOffTargetRequest request) {
-        return CompletableFuture.runAsync(() -> setDefaultHandOffTarget(request));
     }
 
     // ==================== Article Operations ====================
@@ -437,18 +379,6 @@ public class GradientLabsClient {
     }
 
     /**
-     * Creates or updates an article asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires an Integration API key.
-     *
-     * @param request the article parameters
-     * @return a future that completes when the operation finishes
-     */
-    public CompletableFuture<Void> upsertArticleAsync(UpsertArticleRequest request) {
-        return CompletableFuture.runAsync(() -> upsertArticle(request));
-    }
-
-    /**
      * Creates or updates an article topic.
      * <p>
      * Topics enable you to categorize your help articles into groups.
@@ -462,18 +392,6 @@ public class GradientLabsClient {
      */
     public void upsertArticleTopic(UpsertArticleTopicRequest request) {
         httpClient.post("/topics", request, Void.class);
-    }
-
-    /**
-     * Creates or updates an article topic asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires an Integration API key.
-     *
-     * @param request the topic parameters
-     * @return a future that completes when the operation finishes
-     */
-    public CompletableFuture<Void> upsertArticleTopicAsync(UpsertArticleTopicRequest request) {
-        return CompletableFuture.runAsync(() -> upsertArticleTopic(request));
     }
 
     /**
@@ -495,19 +413,6 @@ public class GradientLabsClient {
     }
 
     /**
-     * Sets an article's usage status asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires an Integration API key.
-     *
-     * @param articleId the article ID
-     * @param request   the usage status parameters
-     * @return a future that completes when the operation finishes
-     */
-    public CompletableFuture<Void> setArticleUsageStatusAsync(String articleId, SetArticleUsageStatusRequest request) {
-        return CompletableFuture.runAsync(() -> setArticleUsageStatus(articleId, request));
-    }
-
-    /**
      * Deletes an article.
      * <p>
      * Marks an article as deleted. Copies of the article are kept in case
@@ -521,18 +426,6 @@ public class GradientLabsClient {
     public void deleteArticle(String articleId) {
         String path = String.format("/articles/%s", articleId);
         httpClient.delete(path, Void.class);
-    }
-
-    /**
-     * Deletes an article asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires an Integration API key.
-     *
-     * @param articleId the article ID
-     * @return a future that completes when the operation finishes
-     */
-    public CompletableFuture<Void> deleteArticleAsync(String articleId) {
-        return CompletableFuture.runAsync(() -> deleteArticle(articleId));
     }
 
     // ==================== Procedure Operations ====================
@@ -564,18 +457,6 @@ public class GradientLabsClient {
     }
 
     /**
-     * Lists procedures asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @param request the list request with optional filtering and pagination
-     * @return a future containing the list response
-     */
-    public CompletableFuture<ProcedureListResponse> listProceduresAsync(ListProceduresRequest request) {
-        return CompletableFuture.supplyAsync(() -> listProcedures(request));
-    }
-
-    /**
      * Reads a specific procedure by ID.
      * <p>
      * <strong>Note:</strong> Requires a Management API key.
@@ -587,18 +468,6 @@ public class GradientLabsClient {
     public Procedure readProcedure(String procedureId) {
         String path = String.format("/procedure/%s", procedureId);
         return httpClient.get(path, null, Procedure.class);
-    }
-
-    /**
-     * Reads a specific procedure asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @param procedureId the procedure ID
-     * @return a future containing the procedure
-     */
-    public CompletableFuture<Procedure> readProcedureAsync(String procedureId) {
-        return CompletableFuture.supplyAsync(() -> readProcedure(procedureId));
     }
 
     /**
@@ -619,19 +488,6 @@ public class GradientLabsClient {
     }
 
     /**
-     * Sets the daily usage limit for a procedure asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @param procedureId the procedure ID
-     * @param request the limit configuration
-     * @return a future containing the updated procedure
-     */
-    public CompletableFuture<Procedure> setProcedureLimitAsync(String procedureId, SetProcedureLimitRequest request) {
-        return CompletableFuture.supplyAsync(() -> setProcedureLimit(procedureId, request));
-    }
-
-    /**
      * Lists all versions of a procedure.
      * <p>
      * <strong>Note:</strong> Requires a Management API key.
@@ -643,18 +499,6 @@ public class GradientLabsClient {
     public ListProcedureVersionsResponse listProcedureVersions(String procedureId) {
         String path = String.format("/procedures/%s/versions", procedureId);
         return httpClient.get(path, null, ListProcedureVersionsResponse.class);
-    }
-
-    /**
-     * Lists all versions of a procedure asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @param procedureId the procedure ID
-     * @return a future containing the list of versions
-     */
-    public CompletableFuture<ListProcedureVersionsResponse> listProcedureVersionsAsync(String procedureId) {
-        return CompletableFuture.supplyAsync(() -> listProcedureVersions(procedureId));
     }
 
     /**
@@ -676,20 +520,6 @@ public class GradientLabsClient {
     }
 
     /**
-     * Sets an experimental version for a procedure asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @param procedureId the procedure ID
-     * @param version the version number to set as experimental
-     * @param request the experiment configuration
-     * @return a future that completes when the operation finishes
-     */
-    public CompletableFuture<Void> setProcedureExperimentVersionAsync(String procedureId, int version, SetProcedureExperimentVersionRequest request) {
-        return CompletableFuture.runAsync(() -> setProcedureExperimentVersion(procedureId, version, request));
-    }
-
-    /**
      * Unsets the experimental version for a procedure.
      * <p>
      * <strong>Note:</strong> Requires a Management API key.
@@ -701,19 +531,6 @@ public class GradientLabsClient {
     public void unsetProcedureExperimentVersion(String procedureId, int version) {
         String path = String.format("/procedures/%s/versions/%d/unset-experiment", procedureId, version);
         httpClient.post(path, null, Void.class);
-    }
-
-    /**
-     * Unsets the experimental version for a procedure asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @param procedureId the procedure ID
-     * @param version the version number to unset
-     * @return a future that completes when the operation finishes
-     */
-    public CompletableFuture<Void> unsetProcedureExperimentVersionAsync(String procedureId, int version) {
-        return CompletableFuture.runAsync(() -> unsetProcedureExperimentVersion(procedureId, version));
     }
 
     /**
@@ -734,19 +551,6 @@ public class GradientLabsClient {
     }
 
     /**
-     * Sets the live version for a procedure asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @param procedureId the procedure ID
-     * @param version the version number to set as live
-     * @return a future that completes when the operation finishes
-     */
-    public CompletableFuture<Void> setProcedureLiveVersionAsync(String procedureId, int version) {
-        return CompletableFuture.runAsync(() -> setProcedureLiveVersion(procedureId, version));
-    }
-
-    /**
      * Unsets the live version for a procedure.
      * <p>
      * <strong>Note:</strong> Requires a Management API key.
@@ -758,19 +562,6 @@ public class GradientLabsClient {
     public void unsetProcedureLiveVersion(String procedureId, int version) {
         String path = String.format("/procedures/%s/versions/%d/unset-live", procedureId, version);
         httpClient.post(path, null, Void.class);
-    }
-
-    /**
-     * Unsets the live version for a procedure asynchronously.
-     * <p>
-     * <strong>Note:</strong> Requires a Management API key.
-     *
-     * @param procedureId the procedure ID
-     * @param version the version number to unset
-     * @return a future that completes when the operation finishes
-     */
-    public CompletableFuture<Void> unsetProcedureLiveVersionAsync(String procedureId, int version) {
-        return CompletableFuture.runAsync(() -> unsetProcedureLiveVersion(procedureId, version));
     }
 
     // ==================== Webhook Operations ====================

@@ -13,7 +13,6 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Internal HTTP client wrapper for making API requests.
@@ -80,18 +79,6 @@ public class HttpClientWrapper {
             throw e;
         } catch (Exception e) {
             throw new GradientLabsException("Request failed", e);
-        }
-    }
-
-    public <T> CompletableFuture<T> postAsync(String path, Object body, Class<T> responseType) {
-        try {
-            HttpRequest request = buildRequest("POST", path, body)
-                    .build();
-
-            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(response -> handleResponse(response, responseType));
-        } catch (Exception e) {
-            return CompletableFuture.failedFuture(new GradientLabsException("Request failed", e));
         }
     }
 
