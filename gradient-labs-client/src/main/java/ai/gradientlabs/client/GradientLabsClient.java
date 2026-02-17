@@ -399,6 +399,103 @@ public class GradientLabsClient {
         httpClient.delete(path, Void.class);
     }
 
+    // ==================== Resource Source Operations ====================
+
+    /**
+     * Creates a new resource source.
+     * <p>
+     * Resource sources define how to fetch the data for a resource. They can be configured
+     * to fetch data via HTTP requests or webhooks.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the resource source parameters
+     * @return the created resource source
+     * @throws GradientLabsException if the request fails
+     */
+    public ResourceSource createResourceSource(CreateResourceSourceRequest request) {
+        return httpClient.post("/resource-sources", request, ResourceSource.class);
+    }
+
+    /**
+     * Lists all resource sources.
+     * <p>
+     * Returns all resource sources configured in your organization.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @return list of resource sources
+     * @throws GradientLabsException if the request fails
+     */
+    public List<ResourceSource> listResourceSources() {
+        ResourceSourcesListResponse response = httpClient.get("/resource-sources", null, ResourceSourcesListResponse.class);
+        return response.getResourceSources();
+    }
+
+    /**
+     * Reads a specific resource source by ID.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the request containing the resource source ID
+     * @return the resource source
+     * @throws GradientLabsException if the request fails
+     */
+    public ResourceSource readResourceSource(ReadResourceSourceRequest request) {
+        String path = String.format("/resource-sources/%s", request.getId());
+        return httpClient.get(path, null, ResourceSource.class);
+    }
+
+    /**
+     * Updates an existing resource source.
+     * <p>
+     * All fields except id are optional. If a field is not provided, its value will not be changed.
+     * Note: source_type cannot be updated once set. To change the source_type, you must create a new resource source.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the update parameters
+     * @return the updated resource source
+     * @throws GradientLabsException if the request fails
+     */
+    public ResourceSource updateResourceSource(UpdateResourceSourceRequest request) {
+        String path = String.format("/resource-sources/%s", request.getId());
+        return httpClient.put(path, request, ResourceSource.class);
+    }
+
+    /**
+     * Updates a resource source schema by providing example data payloads.
+     * <p>
+     * Instead of manually defining the JSON schema structure, you send representative examples
+     * of the data your resource source returns, and the system automatically infers the schema
+     * from these examples.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the request containing examples and update strategy
+     * @return the updated resource source
+     * @throws GradientLabsException if the request fails
+     */
+    public ResourceSource updateResourceSourceSchemaByExamples(UpdateResourceSourceSchemaByExamplesRequest request) {
+        String path = String.format("/resource-sources/%s/schema-by-examples", request.getId());
+        return httpClient.post(path, request, ResourceSource.class);
+    }
+
+    /**
+     * Deletes a resource source.
+     * <p>
+     * This will permanently delete the resource source and cannot be undone.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the request containing the resource source ID to delete
+     * @throws GradientLabsException if the request fails
+     */
+    public void deleteResourceSource(DeleteResourceSourceRequest request) {
+        String path = String.format("/resource-sources/%s", request.getId());
+        httpClient.delete(path, Void.class);
+    }
+
     // ==================== Resource Type Operations ====================
 
     /**
