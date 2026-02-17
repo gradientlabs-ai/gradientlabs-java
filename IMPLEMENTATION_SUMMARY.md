@@ -18,37 +18,51 @@ Based on comprehensive research (sources below), the key principles applied:
 
 ## Structure Overview
 
-### Package Organization
+### Multi-Module Maven Structure
 
 ```
-ai.gradientlabs.client/
-├── GradientLabsClient.java          # Main client with fluent builder
-├── exception/                        # Exception hierarchy
-│   ├── GradientLabsException.java   # Base exception
-│   ├── ResponseException.java       # API error responses
-│   └── InvalidWebhookSignatureException.java
-├── model/                            # Domain models (POJOs)
-│   ├── Conversation.java, Message.java, Tool.java, Note.java
-│   ├── Channel.java, ConversationStatus.java, NoteStatus.java (enums)
-│   ├── ParticipantType.java, AttachmentType.java (enums)
-│   └── AgentMetadata.java, Attachment.java
-├── request/                          # Request builders
-│   ├── StartConversationRequest.java
-│   ├── AddMessageRequest.java
-│   ├── AssignmentRequest.java
-│   ├── CreateNoteRequest.java
-│   ├── UpdateNoteRequest.java
-│   ├── SetNoteStatusRequest.java
-│   └── ... (all operations)
-├── webhook/                          # Webhook handling
-│   ├── Webhook.java, WebhookType.java
-│   ├── WebhookVerifier.java         # HMAC signature verification
-│   └── event/                        # Event types
-│       ├── AgentMessageEvent.java
-│       ├── ConversationHandOffEvent.java
-│       └── ... (all event types)
-└── internal/                         # Internal implementation
-    └── HttpClientWrapper.java        # HTTP client abstraction
+gradientlabs-java/
+├── pom.xml                          # Parent POM (packaging=pom)
+├── gradient-labs-client/            # Core client library module
+│   ├── pom.xml
+│   └── src/main/java/
+│       └── ai.gradientlabs.client/
+│           ├── GradientLabsClient.java          # Main client with fluent builder
+│           ├── exception/                        # Exception hierarchy
+│           │   ├── GradientLabsException.java   # Base exception
+│           │   ├── ResponseException.java       # API error responses
+│           │   └── InvalidWebhookSignatureException.java
+│           ├── model/                            # Domain models (POJOs)
+│           │   ├── Conversation.java, Message.java, Tool.java, Note.java
+│           │   ├── Channel.java, ConversationStatus.java, NoteStatus.java (enums)
+│           │   ├── ParticipantType.java, AttachmentType.java (enums)
+│           │   └── AgentMetadata.java, Attachment.java
+│           ├── request/                          # Request builders
+│           │   ├── StartConversationRequest.java
+│           │   ├── AddMessageRequest.java
+│           │   ├── AssignmentRequest.java
+│           │   ├── CreateNoteRequest.java
+│           │   ├── UpdateNoteRequest.java
+│           │   ├── SetNoteStatusRequest.java
+│           │   └── ... (all operations)
+│           ├── webhook/                          # Webhook handling
+│           │   ├── Webhook.java, WebhookType.java
+│           │   ├── WebhookVerifier.java         # HMAC signature verification
+│           │   └── event/                        # Event types
+│           │       ├── AgentMessageEvent.java
+│           │       ├── ConversationHandOffEvent.java
+│           │       └── ... (all event types)
+│           └── internal/                         # Internal implementation
+│               └── HttpClientWrapper.java        # HTTP client abstraction
+└── gradient-labs-spring-boot-starter/   # Spring Boot auto-configuration module
+    ├── pom.xml
+    ├── README.md
+    └── src/main/
+        ├── java/ai.gradientlabs.spring/
+        │   ├── GradientLabsProperties.java          # Configuration properties
+        │   └── GradientLabsAutoConfiguration.java   # Auto-configuration
+        └── resources/META-INF/spring/
+            └── org.springframework.boot.autoconfigure.AutoConfiguration.imports
 ```
 
 ## Key Implementation Details
@@ -235,6 +249,36 @@ Uses Java 11+ `HttpClient` with:
 - Parse and verify
 - All event types (agent.message, conversation.hand_off, etc.)
 
+### Spring Boot Integration
+
+✅ **Spring Boot Starter** (completed)
+- Auto-configuration for Spring Boot 3.x+
+- Type-safe configuration properties via `application.yml` or `application.properties`
+- Automatic bean creation with `@ConditionalOnMissingBean` for customization
+- IDE autocomplete support via configuration metadata
+- See [Spring Boot Starter README](gradient-labs-spring-boot-starter/README.md) for details
+
+**Configuration Example:**
+```yaml
+gradientlabs:
+  api-key: ${GLABS_API_KEY}
+  base-url: https://api.gradient-labs.ai
+  webhook-signing-key: ${GLABS_WEBHOOK_KEY}
+  webhook-leeway: 10m
+```
+
+**Usage Example:**
+```java
+@Service
+public class ConversationService {
+    private final GradientLabsClient client;
+
+    public ConversationService(GradientLabsClient client) {
+        this.client = client;  // Auto-injected
+    }
+}
+```
+
 ### Future Enhancements
 
 The following could be added in future versions:
@@ -242,7 +286,6 @@ The following could be added in future versions:
 - List Notes operation (with filtering/pagination)
 - Pagination helpers for list operations
 - Retry logic with exponential backoff
-- Spring Boot auto-configuration
 
 ## Key Differences from Go Client
 
