@@ -11,9 +11,6 @@ import java.time.Instant;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateNoteRequest {
 
-    @JsonProperty("author_id")
-    private final String authorId;
-
     @JsonProperty("title")
     private final String title;
 
@@ -30,7 +27,6 @@ public class UpdateNoteRequest {
     private final Instant endTime;
 
     private UpdateNoteRequest(Builder builder) {
-        this.authorId = builder.authorId;
         this.title = builder.title;
         this.body = builder.body;
         this.webpageUrl = builder.webpageUrl;
@@ -40,10 +36,6 @@ public class UpdateNoteRequest {
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    public String getAuthorId() {
-        return authorId;
     }
 
     public String getTitle() {
@@ -67,7 +59,6 @@ public class UpdateNoteRequest {
     }
 
     public static class Builder {
-        private String authorId;
         private String title;
         private String body;
         private String webpageUrl;
@@ -75,19 +66,6 @@ public class UpdateNoteRequest {
         private Instant endTime;
 
         private Builder() {
-        }
-
-        /**
-         * Sets the author ID (optional).
-         * <p>
-         * Identifies the (current) author of the note.
-         *
-         * @param authorId the author ID
-         * @return this builder
-         */
-        public Builder authorId(String authorId) {
-            this.authorId = authorId;
-            return this;
         }
 
         /**
