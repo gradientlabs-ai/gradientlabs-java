@@ -399,6 +399,86 @@ public class GradientLabsClient {
         httpClient.delete(path, Void.class);
     }
 
+    // ==================== Resource Type Operations ====================
+
+    /**
+     * Creates a new resource type.
+     * <p>
+     * Resource types define when and how a resource source's data should be used during
+     * a conversation. They determine the scope, refresh strategy, and which attributes
+     * from the source should be included.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the resource type parameters
+     * @return the created resource type
+     * @throws GradientLabsException if the request fails
+     */
+    public ResourceType createResourceType(CreateResourceTypeRequest request) {
+        return httpClient.post("/resource-types", request, ResourceType.class);
+    }
+
+    /**
+     * Lists all resource types.
+     * <p>
+     * Returns all resource types configured in your organization.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @return list of resource types
+     * @throws GradientLabsException if the request fails
+     */
+    public List<ResourceType> listResourceTypes() {
+        ResourceTypesListResponse response = httpClient.get("/resource-types", null, ResourceTypesListResponse.class);
+        return response.getResourceTypes();
+    }
+
+    /**
+     * Retrieves a specific resource type by ID.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the read parameters
+     * @return the resource type
+     * @throws GradientLabsException if the request fails
+     */
+    public ResourceType readResourceType(ReadResourceTypeRequest request) {
+        String path = String.format("/resource-types/%s", request.getId());
+        return httpClient.get(path, null, ResourceType.class);
+    }
+
+    /**
+     * Updates an existing resource type.
+     * <p>
+     * All fields in the request are optional. If a field is not provided, its value
+     * will not be changed. When updating source_config, the entire object must be provided.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the update parameters
+     * @return the updated resource type
+     * @throws GradientLabsException if the request fails
+     */
+    public ResourceType updateResourceType(UpdateResourceTypeRequest request) {
+        String path = String.format("/resource-types/%s", request.getId());
+        return httpClient.put(path, request, ResourceType.class);
+    }
+
+    /**
+     * Deletes a resource type.
+     * <p>
+     * This permanently deletes the resource type and cannot be undone.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the delete parameters
+     * @throws GradientLabsException if the request fails
+     */
+    public void deleteResourceType(DeleteResourceTypeRequest request) {
+        String path = String.format("/resource-types/%s", request.getId());
+        httpClient.delete(path, Void.class);
+    }
+
     // ==================== Hand-Off Target Operations ====================
 
     /**
