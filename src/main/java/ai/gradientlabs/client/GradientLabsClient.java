@@ -535,6 +535,244 @@ public class GradientLabsClient {
         return CompletableFuture.runAsync(() -> deleteArticle(articleId));
     }
 
+    // ==================== Procedure Operations ====================
+
+    /**
+     * Lists procedures.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the list request with optional filtering and pagination
+     * @return the list response with procedures and pagination info
+     * @throws GradientLabsException if the request fails
+     */
+    public ProcedureListResponse listProcedures(ListProceduresRequest request) {
+        StringBuilder path = new StringBuilder("/procedures");
+        boolean hasQueryParam = false;
+
+        if (request.getCursor() != null) {
+            path.append("?cursor=").append(request.getCursor());
+            hasQueryParam = true;
+        }
+
+        if (request.getStatus() != null) {
+            path.append(hasQueryParam ? "&" : "?");
+            path.append("status=").append(request.getStatus().getValue());
+        }
+
+        return httpClient.get(path.toString(), null, ProcedureListResponse.class);
+    }
+
+    /**
+     * Lists procedures asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the list request with optional filtering and pagination
+     * @return a future containing the list response
+     */
+    public CompletableFuture<ProcedureListResponse> listProceduresAsync(ListProceduresRequest request) {
+        return CompletableFuture.supplyAsync(() -> listProcedures(request));
+    }
+
+    /**
+     * Reads a specific procedure by ID.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @return the procedure
+     * @throws GradientLabsException if the request fails
+     */
+    public Procedure readProcedure(String procedureId) {
+        String path = String.format("/procedure/%s", procedureId);
+        return httpClient.get(path, null, Procedure.class);
+    }
+
+    /**
+     * Reads a specific procedure asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @return a future containing the procedure
+     */
+    public CompletableFuture<Procedure> readProcedureAsync(String procedureId) {
+        return CompletableFuture.supplyAsync(() -> readProcedure(procedureId));
+    }
+
+    /**
+     * Sets the daily usage limit for a procedure.
+     * <p>
+     * Use this to configure experimental procedures to have limited usage per day.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @param request the limit configuration
+     * @return the updated procedure
+     * @throws GradientLabsException if the request fails
+     */
+    public Procedure setProcedureLimit(String procedureId, SetProcedureLimitRequest request) {
+        String path = String.format("/procedure/%s/limit", procedureId);
+        return httpClient.post(path, request, Procedure.class);
+    }
+
+    /**
+     * Sets the daily usage limit for a procedure asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @param request the limit configuration
+     * @return a future containing the updated procedure
+     */
+    public CompletableFuture<Procedure> setProcedureLimitAsync(String procedureId, SetProcedureLimitRequest request) {
+        return CompletableFuture.supplyAsync(() -> setProcedureLimit(procedureId, request));
+    }
+
+    /**
+     * Lists all versions of a procedure.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @return the list of procedure versions
+     * @throws GradientLabsException if the request fails
+     */
+    public ListProcedureVersionsResponse listProcedureVersions(String procedureId) {
+        String path = String.format("/procedures/%s/versions", procedureId);
+        return httpClient.get(path, null, ListProcedureVersionsResponse.class);
+    }
+
+    /**
+     * Lists all versions of a procedure asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @return a future containing the list of versions
+     */
+    public CompletableFuture<ListProcedureVersionsResponse> listProcedureVersionsAsync(String procedureId) {
+        return CompletableFuture.supplyAsync(() -> listProcedureVersions(procedureId));
+    }
+
+    /**
+     * Sets an experimental version for a procedure.
+     * <p>
+     * Experimental versions allow gradual rollout of new procedure versions with
+     * daily conversation limits.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @param version the version number to set as experimental
+     * @param request the experiment configuration
+     * @throws GradientLabsException if the request fails
+     */
+    public void setProcedureExperimentVersion(String procedureId, int version, SetProcedureExperimentVersionRequest request) {
+        String path = String.format("/procedures/%s/versions/%d/set-experiment", procedureId, version);
+        httpClient.post(path, request, Void.class);
+    }
+
+    /**
+     * Sets an experimental version for a procedure asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @param version the version number to set as experimental
+     * @param request the experiment configuration
+     * @return a future that completes when the operation finishes
+     */
+    public CompletableFuture<Void> setProcedureExperimentVersionAsync(String procedureId, int version, SetProcedureExperimentVersionRequest request) {
+        return CompletableFuture.runAsync(() -> setProcedureExperimentVersion(procedureId, version, request));
+    }
+
+    /**
+     * Unsets the experimental version for a procedure.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @param version the version number to unset
+     * @throws GradientLabsException if the request fails
+     */
+    public void unsetProcedureExperimentVersion(String procedureId, int version) {
+        String path = String.format("/procedures/%s/versions/%d/unset-experiment", procedureId, version);
+        httpClient.post(path, null, Void.class);
+    }
+
+    /**
+     * Unsets the experimental version for a procedure asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @param version the version number to unset
+     * @return a future that completes when the operation finishes
+     */
+    public CompletableFuture<Void> unsetProcedureExperimentVersionAsync(String procedureId, int version) {
+        return CompletableFuture.runAsync(() -> unsetProcedureExperimentVersion(procedureId, version));
+    }
+
+    /**
+     * Sets the live (production) version for a procedure.
+     * <p>
+     * The live version is used by the agent by default when there are no
+     * experimental versions or all have exceeded their limits.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @param version the version number to set as live
+     * @throws GradientLabsException if the request fails
+     */
+    public void setProcedureLiveVersion(String procedureId, int version) {
+        String path = String.format("/procedures/%s/versions/%d/set-live", procedureId, version);
+        httpClient.post(path, null, Void.class);
+    }
+
+    /**
+     * Sets the live version for a procedure asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @param version the version number to set as live
+     * @return a future that completes when the operation finishes
+     */
+    public CompletableFuture<Void> setProcedureLiveVersionAsync(String procedureId, int version) {
+        return CompletableFuture.runAsync(() -> setProcedureLiveVersion(procedureId, version));
+    }
+
+    /**
+     * Unsets the live version for a procedure.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @param version the version number to unset
+     * @throws GradientLabsException if the request fails
+     */
+    public void unsetProcedureLiveVersion(String procedureId, int version) {
+        String path = String.format("/procedures/%s/versions/%d/unset-live", procedureId, version);
+        httpClient.post(path, null, Void.class);
+    }
+
+    /**
+     * Unsets the live version for a procedure asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param procedureId the procedure ID
+     * @param version the version number to unset
+     * @return a future that completes when the operation finishes
+     */
+    public CompletableFuture<Void> unsetProcedureLiveVersionAsync(String procedureId, int version) {
+        return CompletableFuture.runAsync(() -> unsetProcedureLiveVersion(procedureId, version));
+    }
+
     // ==================== Webhook Operations ====================
 
     /**
