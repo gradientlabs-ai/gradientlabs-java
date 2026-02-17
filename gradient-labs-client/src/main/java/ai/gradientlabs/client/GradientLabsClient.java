@@ -410,6 +410,24 @@ public class GradientLabsClient {
         httpClient.put("/hand-off-targets/default", request, Void.class);
     }
 
+    /**
+     * Gets the current default hand-off target for the company.
+     * <p>
+     * Retrieves the default hand-off target that the AI agent will use when handing off
+     * the conversation, if there is no specific target for that intent or procedure.
+     * This can be retrieved by channel.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the request parameters including channel
+     * @return the response containing the default hand-off target ID (empty if not set)
+     * @throws GradientLabsException if the request fails
+     */
+    public GetDefaultHandOffTargetResponse getDefaultHandOffTarget(GetDefaultHandOffTargetRequest request) {
+        String path = "/hand-off-targets/default?channel=" + request.getChannel().getValue();
+        return httpClient.get(path, null, GetDefaultHandOffTargetResponse.class);
+    }
+
     // ==================== Article Operations ====================
 
     /**
