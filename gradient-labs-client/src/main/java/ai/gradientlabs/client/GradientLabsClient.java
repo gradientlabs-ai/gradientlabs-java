@@ -175,6 +175,35 @@ public class GradientLabsClient {
         httpClient.post(path, new RatingRequest(rating), Void.class);
     }
 
+    /**
+     * Returns the result of an async tool execution.
+     * <p>
+     * When a tool is configured for asynchronous execution, the agent will request
+     * the tool execution via an action.execute webhook event, and your system should
+     * return the result by calling this method.
+     * <p>
+     * This allows your system to perform long-running operations without blocking the
+     * conversation, and return results when they're ready.
+     * <p>
+     * Important Notes:
+     * <ul>
+     *   <li>The conversation must be in an ongoing state. You cannot return async tool
+     *       results to conversations that are finished, failed, or cancelled.</li>
+     *   <li>Make sure to use the correct async tool execution ID from the action.execute
+     *       webhook event.</li>
+     *   <li>The result payload should be a valid JSON object containing the data the
+     *       agent needs to continue the conversation.</li>
+     * </ul>
+     *
+     * @param conversationId the conversation ID
+     * @param request        the async tool result parameters
+     * @throws GradientLabsException if the request fails
+     */
+    public void returnAsyncToolResult(String conversationId, ReturnAsyncToolResultRequest request) {
+        String path = String.format("/conversations/%s/return-async-tool-result", conversationId);
+        httpClient.put(path, request, Void.class);
+    }
+
     // ==================== Tool Operations ====================
 
     /**
