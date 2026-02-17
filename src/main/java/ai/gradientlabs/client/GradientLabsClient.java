@@ -309,6 +309,115 @@ public class GradientLabsClient {
         httpClient.post(path, request, Void.class);
     }
 
+    // ==================== Hand-Off Target Operations ====================
+
+    /**
+     * Lists all hand-off targets.
+     * <p>
+     * Hand-off targets define where conversations can be transferred when they need
+     * human intervention or routing to other systems.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @return list of hand-off targets
+     * @throws GradientLabsException if the request fails
+     */
+    public List<HandOffTarget> listHandOffTargets() {
+        HandOffTargetsResponse response = httpClient.get("/hand-off-targets", null, HandOffTargetsResponse.class);
+        return response.getTargets();
+    }
+
+    /**
+     * Lists all hand-off targets asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @return a future that completes with the list of hand-off targets
+     */
+    public CompletableFuture<List<HandOffTarget>> listHandOffTargetsAsync() {
+        return CompletableFuture.supplyAsync(this::listHandOffTargets);
+    }
+
+    /**
+     * Creates or updates a hand-off target.
+     * <p>
+     * If a hand-off target with the given ID already exists, it will be updated.
+     * Otherwise, a new hand-off target will be created.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the hand-off target parameters
+     * @throws GradientLabsException if the request fails
+     */
+    public void upsertHandOffTarget(UpsertHandOffTargetRequest request) {
+        httpClient.post("/hand-off-targets", request, Void.class);
+    }
+
+    /**
+     * Creates or updates a hand-off target asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the hand-off target parameters
+     * @return a future that completes when the operation finishes
+     */
+    public CompletableFuture<Void> upsertHandOffTargetAsync(UpsertHandOffTargetRequest request) {
+        return CompletableFuture.runAsync(() -> upsertHandOffTarget(request));
+    }
+
+    /**
+     * Deletes a hand-off target.
+     * <p>
+     * This will fail if the hand-off target is in use - either in a procedure or in an intent.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the delete parameters
+     * @throws GradientLabsException if the request fails (including if the target is in use)
+     */
+    public void deleteHandOffTarget(DeleteHandOffTargetRequest request) {
+        httpClient.delete("/hand-off-targets", request, Void.class);
+    }
+
+    /**
+     * Deletes a hand-off target asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the delete parameters
+     * @return a future that completes when the operation finishes
+     */
+    public CompletableFuture<Void> deleteHandOffTargetAsync(DeleteHandOffTargetRequest request) {
+        return CompletableFuture.runAsync(() -> deleteHandOffTarget(request));
+    }
+
+    /**
+     * Sets the default hand-off target for a channel.
+     * <p>
+     * Sets the default hand-off target that the AI agent will use when handing off
+     * the conversation, if there is no specific target for that intent or procedure.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the default target parameters
+     * @throws GradientLabsException if the request fails
+     */
+    public void setDefaultHandOffTarget(SetDefaultHandOffTargetRequest request) {
+        httpClient.put("/hand-off-targets/default", request, Void.class);
+    }
+
+    /**
+     * Sets the default hand-off target for a channel asynchronously.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the default target parameters
+     * @return a future that completes when the operation finishes
+     */
+    public CompletableFuture<Void> setDefaultHandOffTargetAsync(SetDefaultHandOffTargetRequest request) {
+        return CompletableFuture.runAsync(() -> setDefaultHandOffTarget(request));
+    }
+
     // ==================== Webhook Operations ====================
 
     /**

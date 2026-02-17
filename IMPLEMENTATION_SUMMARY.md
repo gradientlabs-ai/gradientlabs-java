@@ -111,7 +111,7 @@ Uses Java 11+ `HttpClient` with:
 
 ## Files Created
 
-### Core Library (38 files)
+### Core Library (43 files)
 
 1. **Build Configuration**
    - `pom.xml` - Maven project configuration
@@ -124,14 +124,15 @@ Uses Java 11+ `HttpClient` with:
    - `ResponseException.java`
    - `InvalidWebhookSignatureException.java`
 
-4. **Models** (13 files)
+4. **Models** (15 files)
    - `Conversation.java`, `AgentMetadata.java`
    - `Message.java`, `Attachment.java`
    - `Tool.java`, `Note.java`
+   - `HandOffTarget.java`, `HandOffTargetsResponse.java`
    - `Channel.java`, `ConversationStatus.java`, `NoteStatus.java`
    - `ParticipantType.java`, `AttachmentType.java`
 
-5. **Request Objects** (11 files)
+5. **Request Objects** (14 files)
    - `StartConversationRequest.java`
    - `AddMessageRequest.java`
    - `AssignmentRequest.java`
@@ -143,6 +144,9 @@ Uses Java 11+ `HttpClient` with:
    - `CreateNoteRequest.java`
    - `UpdateNoteRequest.java`
    - `SetNoteStatusRequest.java`
+   - `UpsertHandOffTargetRequest.java`
+   - `DeleteHandOffTargetRequest.java`
+   - `SetDefaultHandOffTargetRequest.java`
 
 6. **Webhook Handling** (9 files)
    - `Webhook.java`, `WebhookType.java`
@@ -155,7 +159,7 @@ Uses Java 11+ `HttpClient` with:
    - `ResourcePullEvent.java`
 
 7. **Internal** (1 file)
-   - `HttpClientWrapper.java` - HTTP operations
+   - `HttpClientWrapper.java` - HTTP operations (extended with DELETE body support)
 
 ### Documentation (4 files)
 
@@ -164,11 +168,12 @@ Uses Java 11+ `HttpClient` with:
 - `IMPLEMENTATION_SUMMARY.md` - This file
 - `.gitignore` - Git ignore rules
 
-### Examples (3 files)
+### Examples (4 files)
 
 - `BasicConversationExample.java` - Complete conversation flow
 - `WebhookHandlerExample.java` - Webhook handling
 - `NotesExample.java` - Note management operations
+- `HandOffTargetsExample.java` - Hand-off target management
 
 ## API Coverage
 
@@ -187,6 +192,11 @@ Uses Java 11+ `HttpClient` with:
 - Time-based relevance (valid_from, valid_to)
 - External ID mapping
 
+✅ **Hand-Off Targets**
+- List, Upsert (Create/Update), Delete
+- Set Default by Channel
+- Requires Management API key
+
 ✅ **Webhooks**
 - Parse and verify
 - All event types (agent.message, conversation.hand_off, etc.)
@@ -196,7 +206,6 @@ Uses Java 11+ `HttpClient` with:
 The following could be added in future versions:
 - Procedures API
 - Articles API
-- Handoff Targets API
 - Resource Sources/Types API
 - List Notes operation (with filtering/pagination)
 - Pagination helpers for list operations
@@ -313,8 +322,8 @@ The design is based on industry best practices from:
 
 To complete the implementation:
 
-1. **Add remaining models** - Procedure, Article, HandoffTarget, ResourceSource, ResourceType
-2. **Add remaining operations** - Procedure, Article, HandoffTarget, ResourceSource/Type APIs
+1. **Add remaining models** - Procedure, Article, ResourceSource, ResourceType
+2. **Add remaining operations** - Procedure, Article, ResourceSource/Type APIs
 3. **Add tests** - Unit tests and integration tests
 4. **Add pagination helpers** - Iterator-style API for list operations
 5. **Add retry logic** - Configurable retry with exponential backoff
