@@ -478,6 +478,47 @@ public class GradientLabsClient {
         httpClient.delete(path, Void.class);
     }
 
+    /**
+     * Lists topics.
+     * <p>
+     * Topics enable you to categorize your help articles into groups.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the list request with optional filtering
+     * @return the list response containing topics
+     * @throws GradientLabsException if the request fails
+     */
+    public ListTopicsResponse listTopics(ListTopicsRequest request) {
+        StringBuilder path = new StringBuilder("/topics");
+
+        if (request.getSupportPlatform() != null) {
+            path.append("?support_platform=").append(request.getSupportPlatform());
+        }
+
+        return httpClient.get(path.toString(), null, ListTopicsResponse.class);
+    }
+
+    /**
+     * Reads a topic by ID.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param topicId the topic ID
+     * @param request the request with optional support platform parameter
+     * @return the topic
+     * @throws GradientLabsException if the request fails
+     */
+    public Topic readTopic(String topicId, ReadTopicRequest request) {
+        StringBuilder path = new StringBuilder(String.format("/topic/%s", topicId));
+
+        if (request.getSupportPlatform() != null) {
+            path.append("?support_platform=").append(request.getSupportPlatform());
+        }
+
+        return httpClient.get(path.toString(), null, Topic.class);
+    }
+
     // ==================== Procedure Operations ====================
 
     /**
