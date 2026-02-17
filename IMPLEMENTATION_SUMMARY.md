@@ -111,7 +111,7 @@ Uses Java 11+ `HttpClient` with:
 
 ## Files Created
 
-### Core Library (43 files)
+### Core Library
 
 1. **Build Configuration**
    - `pom.xml` - Maven project configuration
@@ -124,15 +124,16 @@ Uses Java 11+ `HttpClient` with:
    - `ResponseException.java`
    - `InvalidWebhookSignatureException.java`
 
-4. **Models** (15 files)
+4. **Models** (18 files)
    - `Conversation.java`, `AgentMetadata.java`
    - `Message.java`, `Attachment.java`
    - `Tool.java`, `Note.java`
    - `HandOffTarget.java`, `HandOffTargetsResponse.java`
    - `Channel.java`, `ConversationStatus.java`, `NoteStatus.java`
    - `ParticipantType.java`, `AttachmentType.java`
+   - `Visibility.java`, `PublicationStatus.java`, `UsageStatus.java`
 
-5. **Request Objects** (14 files)
+5. **Request Objects** (17 files)
    - `StartConversationRequest.java`
    - `AddMessageRequest.java`
    - `AssignmentRequest.java`
@@ -147,6 +148,9 @@ Uses Java 11+ `HttpClient` with:
    - `UpsertHandOffTargetRequest.java`
    - `DeleteHandOffTargetRequest.java`
    - `SetDefaultHandOffTargetRequest.java`
+   - `UpsertArticleRequest.java`
+   - `UpsertArticleTopicRequest.java`
+   - `SetArticleUsageStatusRequest.java`
 
 6. **Webhook Handling** (9 files)
    - `Webhook.java`, `WebhookType.java`
@@ -168,12 +172,13 @@ Uses Java 11+ `HttpClient` with:
 - `IMPLEMENTATION_SUMMARY.md` - This file
 - `.gitignore` - Git ignore rules
 
-### Examples (4 files)
+### Examples (5 files)
 
 - `BasicConversationExample.java` - Complete conversation flow
 - `WebhookHandlerExample.java` - Webhook handling
 - `NotesExample.java` - Note management operations
 - `HandOffTargetsExample.java` - Hand-off target management
+- `ArticlesExample.java` - Article and topic management for knowledge base
 
 ## API Coverage
 
@@ -197,6 +202,14 @@ Uses Java 11+ `HttpClient` with:
 - Set Default by Channel
 - Requires Management API key
 
+✅ **Articles**
+- Upsert Article (Create/Update), Delete
+- Upsert Article Topic (Create/Update)
+- Set Usage Status (enable/disable for AI agent)
+- Support for visibility levels (public/users/internal)
+- Support for publication status (draft/published)
+- Requires Integration API key
+
 ✅ **Webhooks**
 - Parse and verify
 - All event types (agent.message, conversation.hand_off, etc.)
@@ -205,7 +218,6 @@ Uses Java 11+ `HttpClient` with:
 
 The following could be added in future versions:
 - Procedures API
-- Articles API
 - Resource Sources/Types API
 - List Notes operation (with filtering/pagination)
 - Pagination helpers for list operations
@@ -322,8 +334,8 @@ The design is based on industry best practices from:
 
 To complete the implementation:
 
-1. **Add remaining models** - Procedure, Article, ResourceSource, ResourceType
-2. **Add remaining operations** - Procedure, Article, ResourceSource/Type APIs
+1. **Add remaining models** - Procedure, ResourceSource, ResourceType
+2. **Add remaining operations** - Procedure, ResourceSource/Type APIs
 3. **Add tests** - Unit tests and integration tests
 4. **Add pagination helpers** - Iterator-style API for list operations
 5. **Add retry logic** - Configurable retry with exponential backoff

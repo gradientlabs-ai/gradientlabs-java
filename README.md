@@ -294,6 +294,61 @@ client.deleteHandOffTarget(
 );
 ```
 
+### Articles
+
+**Note:** All article operations require an Integration API key.
+
+```java
+import ai.gradientlabs.client.model.*;
+import ai.gradientlabs.client.request.*;
+import java.time.Instant;
+
+// Create or update a topic
+client.upsertArticleTopic(
+    UpsertArticleTopicRequest.builder()
+        .id("account-management")
+        .name("Account Management")
+        .description("How to manage your account")
+        .visibility(Visibility.PUBLIC)
+        .status(PublicationStatus.PUBLISHED)
+        .created(Instant.now())
+        .lastEdited(Instant.now())
+        .build()
+);
+
+// Create or update an article
+client.upsertArticle(
+    UpsertArticleRequest.builder()
+        .id("change-address")
+        .authorId("author@example.com")
+        .title("Change my address")
+        .description("Learn how to update your address")
+        .body("Go to settings and tap 'update my address.'")
+        .visibility(Visibility.PUBLIC)
+        .topicId("account-management")
+        .status(PublicationStatus.PUBLISHED)
+        .created(Instant.now())
+        .lastEdited(Instant.now())
+        .addData("reading_time", "2 minutes")
+        .build()
+);
+
+// Set article usage status (enable for AI agent)
+client.setArticleUsageStatus(
+    "change-address",
+    new SetArticleUsageStatusRequest(UsageStatus.ON)
+);
+
+// Disable article from AI agent use
+client.setArticleUsageStatus(
+    "change-address",
+    new SetArticleUsageStatusRequest(UsageStatus.OFF)
+);
+
+// Delete an article
+client.deleteArticle("change-address");
+```
+
 ## Async API
 
 All methods that make HTTP requests have async variants:
@@ -390,6 +445,7 @@ See the `examples/` directory for complete working examples:
 - [Webhook Handler](examples/WebhookHandlerExample.java) - Handling webhook events
 - [Notes Example](examples/NotesExample.java) - Creating and managing notes
 - [Hand-Off Targets Example](examples/HandOffTargetsExample.java) - Managing hand-off targets for conversation routing
+- [Articles Example](examples/ArticlesExample.java) - Managing articles and topics for the knowledge base
 
 ## Contributing
 
