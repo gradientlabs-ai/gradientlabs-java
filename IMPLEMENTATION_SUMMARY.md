@@ -28,14 +28,17 @@ ai.gradientlabs.client/
 │   ├── ResponseException.java       # API error responses
 │   └── InvalidWebhookSignatureException.java
 ├── model/                            # Domain models (POJOs)
-│   ├── Conversation.java, Message.java, Tool.java
-│   ├── Channel.java, ConversationStatus.java (enums)
+│   ├── Conversation.java, Message.java, Tool.java, Note.java
+│   ├── Channel.java, ConversationStatus.java, NoteStatus.java (enums)
 │   ├── ParticipantType.java, AttachmentType.java (enums)
 │   └── AgentMetadata.java, Attachment.java
 ├── request/                          # Request builders
 │   ├── StartConversationRequest.java
 │   ├── AddMessageRequest.java
 │   ├── AssignmentRequest.java
+│   ├── CreateNoteRequest.java
+│   ├── UpdateNoteRequest.java
+│   ├── SetNoteStatusRequest.java
 │   └── ... (all operations)
 ├── webhook/                          # Webhook handling
 │   ├── Webhook.java, WebhookType.java
@@ -108,7 +111,7 @@ Uses Java 11+ `HttpClient` with:
 
 ## Files Created
 
-### Core Library (32 files)
+### Core Library (38 files)
 
 1. **Build Configuration**
    - `pom.xml` - Maven project configuration
@@ -121,14 +124,14 @@ Uses Java 11+ `HttpClient` with:
    - `ResponseException.java`
    - `InvalidWebhookSignatureException.java`
 
-4. **Models** (11 files)
+4. **Models** (13 files)
    - `Conversation.java`, `AgentMetadata.java`
    - `Message.java`, `Attachment.java`
-   - `Tool.java`
-   - `Channel.java`, `ConversationStatus.java`
+   - `Tool.java`, `Note.java`
+   - `Channel.java`, `ConversationStatus.java`, `NoteStatus.java`
    - `ParticipantType.java`, `AttachmentType.java`
 
-5. **Request Objects** (8 files)
+5. **Request Objects** (11 files)
    - `StartConversationRequest.java`
    - `AddMessageRequest.java`
    - `AssignmentRequest.java`
@@ -137,6 +140,9 @@ Uses Java 11+ `HttpClient` with:
    - `ReadConversationRequest.java`
    - `CreateToolRequest.java`
    - `UpdateToolRequest.java`
+   - `CreateNoteRequest.java`
+   - `UpdateNoteRequest.java`
+   - `SetNoteStatusRequest.java`
 
 6. **Webhook Handling** (9 files)
    - `Webhook.java`, `WebhookType.java`
@@ -158,10 +164,11 @@ Uses Java 11+ `HttpClient` with:
 - `IMPLEMENTATION_SUMMARY.md` - This file
 - `.gitignore` - Git ignore rules
 
-### Examples (2 files)
+### Examples (3 files)
 
 - `BasicConversationExample.java` - Complete conversation flow
 - `WebhookHandlerExample.java` - Webhook handling
+- `NotesExample.java` - Note management operations
 
 ## API Coverage
 
@@ -174,6 +181,12 @@ Uses Java 11+ `HttpClient` with:
 ✅ **Tools**
 - List, Create, Read, Update, Delete
 
+✅ **Notes**
+- Create, Update, Delete, Set Status
+- Support for draft/live/deleted status
+- Time-based relevance (valid_from, valid_to)
+- External ID mapping
+
 ✅ **Webhooks**
 - Parse and verify
 - All event types (agent.message, conversation.hand_off, etc.)
@@ -185,7 +198,8 @@ The following could be added in future versions:
 - Articles API
 - Handoff Targets API
 - Resource Sources/Types API
-- Pagination helpers
+- List Notes operation (with filtering/pagination)
+- Pagination helpers for list operations
 - Retry logic with exponential backoff
 - Spring Boot auto-configuration
 
@@ -263,6 +277,15 @@ Message msg = client.addMessage(
         .body("Hello!")
         .participantId("user-456")
         .participantType(ParticipantType.CUSTOMER)
+        .build()
+);
+
+// Create a note
+Note note = client.createNote(
+    CreateNoteRequest.builder()
+        .externalId("note-001")
+        .title("Support Hours")
+        .body("Our support team is available Monday-Friday, 9am-5pm EST")
         .build()
 );
 
