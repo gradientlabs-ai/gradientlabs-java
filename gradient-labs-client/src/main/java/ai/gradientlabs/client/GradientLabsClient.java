@@ -80,6 +80,27 @@ public class GradientLabsClient {
     }
 
     /**
+     * Starts an outbound conversation.
+     * <p>
+     * Creates and starts a new outbound conversation where the AI agent proactively
+     * initiates contact with a customer. The conversation follows the instructions
+     * defined in the specified outbound procedure.
+     * <p>
+     * If support_platform is not provided, the system will automatically select the
+     * highest priority platform that has integration settings configured for your company.
+     * <p>
+     * If body and subject are provided, that message will be sent as the initial message.
+     * Otherwise, the AI agent will generate an appropriate initial message based on the procedure.
+     *
+     * @param request the outbound conversation parameters
+     * @return the response containing the conversation ID
+     * @throws GradientLabsException if the request fails
+     */
+    public ai.gradientlabs.client.response.StartOutboundConversationResponse startOutboundConversation(StartOutboundConversationRequest request) {
+        return httpClient.post("/outbound/conversations", request, ai.gradientlabs.client.response.StartOutboundConversationResponse.class);
+    }
+
+    /**
      * Retrieves a conversation by ID.
      *
      * @param conversationId the conversation ID
