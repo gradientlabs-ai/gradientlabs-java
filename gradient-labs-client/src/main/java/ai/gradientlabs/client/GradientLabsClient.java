@@ -348,6 +348,57 @@ public class GradientLabsClient {
         httpClient.post(path, request, Void.class);
     }
 
+    // ==================== Secret Operations ====================
+
+    /**
+     * Writes (creates or updates) a secret.
+     * <p>
+     * Secrets provide secure storage for sensitive data like API credentials.
+     * If a secret with the given name already exists, it will be updated.
+     * Otherwise, a new secret will be created.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the secret parameters
+     * @return the created or updated secret
+     * @throws GradientLabsException if the request fails
+     */
+    public Secret writeSecret(WriteSecretRequest request) {
+        String path = String.format("/secrets/%s", request.getName());
+        return httpClient.put(path, request, Secret.class);
+    }
+
+    /**
+     * Lists all secrets.
+     * <p>
+     * Returns metadata about all secrets in your organization.
+     * Note that the actual secret values are not returned.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @return list of secrets
+     * @throws GradientLabsException if the request fails
+     */
+    public List<Secret> listSecrets() {
+        SecretsListResponse response = httpClient.get("/secrets", null, SecretsListResponse.class);
+        return response.getSecrets();
+    }
+
+    /**
+     * Revokes (deletes) a secret.
+     * <p>
+     * This permanently deletes the secret and cannot be undone.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the revoke parameters
+     * @throws GradientLabsException if the request fails
+     */
+    public void revokeSecret(RevokeSecretRequest request) {
+        String path = String.format("/secrets/%s", request.getName());
+        httpClient.delete(path, Void.class);
+    }
+
     // ==================== Hand-Off Target Operations ====================
 
     /**
