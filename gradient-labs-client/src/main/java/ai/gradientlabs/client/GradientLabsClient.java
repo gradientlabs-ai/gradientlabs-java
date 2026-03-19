@@ -901,6 +901,89 @@ public class GradientLabsClient {
         httpClient.post(path, null, Void.class);
     }
 
+    // ==================== Traffic Group Operations ====================
+
+    /**
+     * Creates a new traffic group.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the traffic group creation parameters
+     * @return the created traffic group
+     * @throws GradientLabsException if the request fails
+     */
+    public TrafficGroup createTrafficGroup(CreateTrafficGroupRequest request) {
+        return httpClient.post("/traffic-groups", request, TrafficGroup.class);
+    }
+
+    /**
+     * Lists all traffic groups.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @return list of traffic groups
+     * @throws GradientLabsException if the request fails
+     */
+    public List<TrafficGroup> listTrafficGroups() {
+        TrafficGroupsListResponse response = httpClient.get("/traffic-groups", null, TrafficGroupsListResponse.class);
+        return response.getTrafficGroups();
+    }
+
+    /**
+     * Updates an existing traffic group.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the update parameters
+     * @return the updated traffic group
+     * @throws GradientLabsException if the request fails
+     */
+    public TrafficGroup updateTrafficGroup(UpdateTrafficGroupRequest request) {
+        String path = String.format("/traffic-groups/%s", request.getId());
+        return httpClient.put(path, request, TrafficGroup.class);
+    }
+
+    /**
+     * Deletes a traffic group and all associated targets.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param trafficGroupId the traffic group ID to delete
+     * @throws GradientLabsException if the request fails
+     */
+    public void deleteTrafficGroup(String trafficGroupId) {
+        String path = String.format("/traffic-groups/%s", trafficGroupId);
+        httpClient.delete(path, Void.class);
+    }
+
+    /**
+     * Adds a target to a traffic group.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the target creation parameters
+     * @return the created traffic group target
+     * @throws GradientLabsException if the request fails
+     */
+    public TrafficGroupTarget createTrafficGroupTarget(CreateTrafficGroupTargetRequest request) {
+        String path = String.format("/traffic-groups/%s/targets", request.getGroupId());
+        return httpClient.post(path, request, TrafficGroupTarget.class);
+    }
+
+    /**
+     * Removes a target from a traffic group.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param trafficGroupId the traffic group ID
+     * @param targetId       the target ID to remove
+     * @throws GradientLabsException if the request fails
+     */
+    public void deleteTrafficGroupTarget(String trafficGroupId, String targetId) {
+        String path = String.format("/traffic-groups/%s/targets/%s", trafficGroupId, targetId);
+        httpClient.delete(path, Void.class);
+    }
+
     // ==================== Webhook Operations ====================
 
     /**

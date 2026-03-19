@@ -42,6 +42,9 @@ public class StartConversationRequest {
     @JsonProperty("conversation_token")
     private final String conversationToken;
 
+    @JsonProperty("traffic_group_id")
+    private final String trafficGroupId;
+
     private StartConversationRequest(Builder builder) {
         this.id = builder.id;
         this.customerId = builder.customerId;
@@ -52,6 +55,7 @@ public class StartConversationRequest {
         this.created = builder.created;
         this.resources = builder.resources;
         this.conversationToken = builder.conversationToken;
+        this.trafficGroupId = builder.trafficGroupId;
     }
 
     public static Builder builder() {
@@ -94,6 +98,15 @@ public class StartConversationRequest {
         return conversationToken;
     }
 
+    /**
+     * Gets the traffic group ID that restricts which procedures the conversation can access.
+     *
+     * @return the traffic group ID, or null if not restricted
+     */
+    public String getTrafficGroupId() {
+        return trafficGroupId;
+    }
+
     public static class Builder {
         private String id;
         private String customerId;
@@ -104,6 +117,7 @@ public class StartConversationRequest {
         private Instant created;
         private Map<String, Object> resources;
         private String conversationToken;
+        private String trafficGroupId;
 
         private Builder() {
         }
@@ -254,6 +268,20 @@ public class StartConversationRequest {
          */
         public Builder conversationToken(String conversationToken) {
             this.conversationToken = conversationToken;
+            return this;
+        }
+
+        /**
+         * Sets the traffic group ID (optional).
+         * <p>
+         * Restricts the conversation to only access procedures assigned to the specified
+         * traffic group, plus any procedures not assigned to any group.
+         *
+         * @param trafficGroupId the traffic group ID
+         * @return this builder
+         */
+        public Builder trafficGroupId(String trafficGroupId) {
+            this.trafficGroupId = trafficGroupId;
             return this;
         }
 
