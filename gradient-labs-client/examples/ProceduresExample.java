@@ -6,7 +6,7 @@ import ai.gradientlabs.client.model.Procedure;
 import ai.gradientlabs.client.model.ProcedureStatus;
 import ai.gradientlabs.client.model.ProcedureVersion;
 import ai.gradientlabs.client.request.ListProceduresRequest;
-import ai.gradientlabs.client.request.SetProcedureExperimentVersionRequest;
+import ai.gradientlabs.client.request.SetProcedureGatedVersionRequest;
 import ai.gradientlabs.client.request.SetProcedureLimitRequest;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  * Example demonstrating how to use the Procedures API.
  * <p>
  * Procedures are instructions that the AI agent uses to resolve specific customer problems.
- * You can manage procedure versions, set experiments for gradual rollouts, and configure
+ * You can manage procedure versions, set gated versions for gradual rollouts, and configure
  * daily usage limits.
  * <p>
  * <strong>Note:</strong> All procedure operations require a Management API key.
@@ -128,10 +128,10 @@ public class ProceduresExample {
                 System.out.println("  Author: " + version.getAuthor());
                 System.out.println("  Created: " + version.getCreated());
                 System.out.println("  Live: " + version.isLive());
-                System.out.println("  Experimental: " + version.isExperimental());
-                if (version.isExperimental() && version.getExperimentalConfig() != null) {
+                System.out.println("  Gated: " + version.isGated());
+                if (version.isGated() && version.getGatedConfig() != null) {
                     System.out.println("  Max Daily Conversations: " +
-                            version.getExperimentalConfig().getMaxDailyConversations());
+                            version.getGatedConfig().getMaxDailyConversations());
                 }
             }
 
@@ -146,33 +146,33 @@ public class ProceduresExample {
 
                 int versionNumber = testVersion.getVersion();
 
-                System.out.println("\n=== Setting Experimental Version ===");
+                System.out.println("\n=== Setting Gated Version ===");
 
-                // Set as experimental version with daily limit of 100 conversations
-                SetProcedureExperimentVersionRequest experimentRequest = SetProcedureExperimentVersionRequest.builder()
+                // Set as gated version with daily limit of 100 conversations
+                SetProcedureGatedVersionRequest gatedRequest = SetProcedureGatedVersionRequest.builder()
                         .maxDailyConversations(100)
-                        .replace(true)  // Replace any existing experiment
+                        .replace(true)  // Replace any existing gated version
                         .build();
 
-                client.setProcedureExperimentVersion(procedureId, versionNumber, experimentRequest);
-                System.out.println("Set version " + versionNumber + " as experimental with 100 daily conversations");
+                client.setProcedureGatedVersion(procedureId, versionNumber, gatedRequest);
+                System.out.println("Set version " + versionNumber + " as gated with 100 daily conversations");
 
                 // Verify the change
                 ListProcedureVersionsResponse updatedVersions = client.listProcedureVersions(procedureId);
-                ProcedureVersion experimentalVersion = updatedVersions.getVersions().stream()
-                        .filter(ProcedureVersion::isExperimental)
+                ProcedureVersion gatedVersion = updatedVersions.getVersions().stream()
+                        .filter(ProcedureVersion::isGated)
                         .findFirst()
                         .orElse(null);
 
-                if (experimentalVersion != null) {
-                    System.out.println("Confirmed: Version " + experimentalVersion.getVersion() +
-                            " is now experimental");
+                if (gatedVersion != null) {
+                    System.out.println("Confirmed: Version " + gatedVersion.getVersion() +
+                            " is now gated");
                 }
 
-                // Unset experimental version
-                System.out.println("\n=== Unsetting Experimental Version ===");
-                client.unsetProcedureExperimentVersion(procedureId, versionNumber);
-                System.out.println("Unset experimental version " + versionNumber);
+                // Unset gated version
+                System.out.println("\n=== Unsetting Gated Version ===");
+                client.unsetProcedureGatedVersion(procedureId, versionNumber);
+                System.out.println("Unset gated version " + versionNumber);
 
                 // Set as live version
                 System.out.println("\n=== Setting Live Version ===");

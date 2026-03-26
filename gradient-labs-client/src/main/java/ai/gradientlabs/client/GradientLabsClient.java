@@ -810,7 +810,7 @@ public class GradientLabsClient {
     /**
      * Sets the daily usage limit for a procedure.
      * <p>
-     * Use this to configure experimental procedures to have limited usage per day.
+     * Use this to configure gated procedures to have limited usage per day.
      * <p>
      * <strong>Note:</strong> Requires a Management API key.
      *
@@ -839,25 +839,25 @@ public class GradientLabsClient {
     }
 
     /**
-     * Sets an experimental version for a procedure.
+     * Sets a gated version for a procedure.
      * <p>
-     * Experimental versions allow gradual rollout of new procedure versions with
+     * Gated versions allow gradual rollout of new procedure versions with
      * daily conversation limits.
      * <p>
      * <strong>Note:</strong> Requires a Management API key.
      *
      * @param procedureId the procedure ID
-     * @param version the version number to set as experimental
-     * @param request the experiment configuration
+     * @param version the version number to set as gated
+     * @param request the gated version configuration
      * @throws GradientLabsException if the request fails
      */
-    public void setProcedureExperimentVersion(String procedureId, int version, SetProcedureExperimentVersionRequest request) {
-        String path = String.format("/procedures/%s/versions/%d/set-experiment", procedureId, version);
+    public void setProcedureGatedVersion(String procedureId, int version, SetProcedureGatedVersionRequest request) {
+        String path = String.format("/procedures/%s/versions/%d/set-gated", procedureId, version);
         httpClient.post(path, request, Void.class);
     }
 
     /**
-     * Unsets the experimental version for a procedure.
+     * Unsets the gated version for a procedure.
      * <p>
      * <strong>Note:</strong> Requires a Management API key.
      *
@@ -865,8 +865,8 @@ public class GradientLabsClient {
      * @param version the version number to unset
      * @throws GradientLabsException if the request fails
      */
-    public void unsetProcedureExperimentVersion(String procedureId, int version) {
-        String path = String.format("/procedures/%s/versions/%d/unset-experiment", procedureId, version);
+    public void unsetProcedureGatedVersion(String procedureId, int version) {
+        String path = String.format("/procedures/%s/versions/%d/unset-gated", procedureId, version);
         httpClient.post(path, null, Void.class);
     }
 
@@ -874,7 +874,7 @@ public class GradientLabsClient {
      * Sets the live (production) version for a procedure.
      * <p>
      * The live version is used by the agent by default when there are no
-     * experimental versions or all have exceeded their limits.
+     * gated versions or all have exceeded their limits.
      * <p>
      * <strong>Note:</strong> Requires a Management API key.
      *

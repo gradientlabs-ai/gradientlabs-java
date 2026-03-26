@@ -144,7 +144,7 @@ Uses Java 11+ `HttpClient` with:
    - `Tool.java`, `Note.java`
    - `HandOffTarget.java`, `HandOffTargetsResponse.java`
    - `Procedure.java`, `ProcedureVersion.java`
-   - `UserDetails.java`, `ExperimentalConfig.java`
+   - `UserDetails.java`, `GatedConfig.java`
    - `PaginationInfo.java`
    - `Channel.java`, `ConversationStatus.java`, `NoteStatus.java`
    - `ParticipantType.java`, `AttachmentType.java`
@@ -175,7 +175,7 @@ Uses Java 11+ `HttpClient` with:
    - `SetArticleUsageStatusRequest.java`
    - `ListProceduresRequest.java`
    - `SetProcedureLimitRequest.java`
-   - `SetProcedureExperimentVersionRequest.java`
+   - `SetProcedureGatedVersionRequest.java`
 
 6. **Webhook Handling** (9 files)
    - `Webhook.java`, `WebhookType.java`
@@ -240,9 +240,9 @@ Uses Java 11+ `HttpClient` with:
 - List, Read (with pagination and filtering)
 - Set Limit (daily usage limits)
 - List Versions
-- Set/Unset Experiment Version (gradual rollout)
+- Set/Unset Gated Version (gradual rollout)
 - Set/Unset Live Version
-- Support for experimental and live version management
+- Support for gated and live version management
 - Requires Management API key
 
 ✅ **Webhooks**

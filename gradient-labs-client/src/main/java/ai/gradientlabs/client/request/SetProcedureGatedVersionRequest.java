@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Parameters for setting an experimental version of a procedure.
+ * Parameters for setting a gated version of a procedure.
  * <p>
- * Experimental versions allow gradual rollout of new procedure versions
+ * Gated versions allow gradual rollout of new procedure versions
  * with daily conversation limits.
  * <p>
  * <strong>Note:</strong> Requires a Management API key.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SetProcedureExperimentVersionRequest {
+public class SetProcedureGatedVersionRequest {
 
     @JsonProperty("max_daily_conversations")
     private final int maxDailyConversations;
@@ -20,13 +20,13 @@ public class SetProcedureExperimentVersionRequest {
     @JsonProperty("replace")
     private final boolean replace;
 
-    private SetProcedureExperimentVersionRequest(Builder builder) {
+    private SetProcedureGatedVersionRequest(Builder builder) {
         this.maxDailyConversations = builder.maxDailyConversations;
         this.replace = builder.replace;
     }
 
     /**
-     * Gets the maximum number of conversations per day that can use this experimental version.
+     * Gets the maximum number of conversations per day that can use the gated version.
      *
      * @return the maximum daily conversations
      */
@@ -35,16 +35,16 @@ public class SetProcedureExperimentVersionRequest {
     }
 
     /**
-     * Checks if an existing experiment should be replaced.
+     * Checks if an existing gated version should be replaced.
      *
-     * @return true to replace an existing experiment, false to fail if one exists
+     * @return true to replace an existing gated version, false to fail if one exists
      */
     public boolean isReplace() {
         return replace;
     }
 
     /**
-     * Creates a new builder for SetProcedureExperimentVersionRequest.
+     * Creates a new builder for SetProcedureGatedVersionRequest.
      *
      * @return a new builder
      */
@@ -57,9 +57,9 @@ public class SetProcedureExperimentVersionRequest {
         private boolean replace = false;
 
         /**
-         * Sets the maximum number of conversations per day that can use this experimental version.
+         * Sets the maximum number of conversations per day that can use the gated version.
          * <p>
-         * This allows gradual rollout of a new procedure version.
+         * Setting maxDailyConversations allows gradual rollout of a new procedure version.
          *
          * @param maxDailyConversations the maximum daily conversations (required)
          * @return this builder
@@ -70,12 +70,12 @@ public class SetProcedureExperimentVersionRequest {
         }
 
         /**
-         * Sets whether to replace an existing experiment.
+         * Sets whether to replace an existing gated version.
          * <p>
-         * If true, an existing experiment (if any) will be replaced with a new one.
-         * If false (default), an error will be returned if another experiment already exists.
+         * If true, an existing gated version (if any) will be replaced with a new one.
+         * If false (default), an error will be returned if another gated version already exists.
          *
-         * @param replace true to replace existing experiments
+         * @param replace true to replace existing gated versions
          * @return this builder
          */
         public Builder replace(boolean replace) {
@@ -89,11 +89,11 @@ public class SetProcedureExperimentVersionRequest {
          * @return the built request
          * @throws IllegalArgumentException if maxDailyConversations is not positive
          */
-        public SetProcedureExperimentVersionRequest build() {
+        public SetProcedureGatedVersionRequest build() {
             if (maxDailyConversations <= 0) {
                 throw new IllegalArgumentException("maxDailyConversations must be positive");
             }
-            return new SetProcedureExperimentVersionRequest(this);
+            return new SetProcedureGatedVersionRequest(this);
         }
     }
 }

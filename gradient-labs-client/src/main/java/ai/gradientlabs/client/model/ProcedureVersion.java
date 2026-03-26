@@ -8,7 +8,7 @@ import java.time.Instant;
  * A specific version of a procedure.
  * <p>
  * Procedures can have multiple versions, with one marked as "live" (production)
- * and optionally one marked as "experimental" for controlled testing.
+ * and optionally one marked as "gated" for controlled testing.
  */
 public class ProcedureVersion {
 
@@ -27,11 +27,11 @@ public class ProcedureVersion {
     @JsonProperty("created")
     private Instant created;
 
-    @JsonProperty("experimental")
-    private boolean experimental;
+    @JsonProperty("gated")
+    private boolean gated;
 
-    @JsonProperty("experimental_config")
-    private ExperimentalConfig experimentalConfig;
+    @JsonProperty("gated_config")
+    private GatedConfig gatedConfig;
 
     @JsonProperty("live")
     private boolean live;
@@ -129,51 +129,51 @@ public class ProcedureVersion {
     }
 
     /**
-     * Checks if this is an experimental version.
+     * Checks if this is a gated version.
      * <p>
-     * Experimental versions are used before "live" versions, within the daily
-     * limit defined in the experimental config.
+     * Gated versions are used before "live" versions, within the daily
+     * limit defined in the gated config.
      *
-     * @return true if this is an experimental version
+     * @return true if this is a gated version
      */
-    public boolean isExperimental() {
-        return experimental;
+    public boolean isGated() {
+        return gated;
     }
 
     /**
-     * Sets whether this is an experimental version.
+     * Sets whether this is a gated version.
      *
-     * @param experimental true for experimental versions
+     * @param gated true for gated versions
      */
-    public void setExperimental(boolean experimental) {
-        this.experimental = experimental;
+    public void setGated(boolean gated) {
+        this.gated = gated;
     }
 
     /**
-     * Gets the configuration for this experimental version.
+     * Gets the configuration for the gated version.
      * <p>
-     * Only relevant if this is an experimental version.
+     * Only relevant if the version is gated.
      *
-     * @return the experimental configuration, or null if not experimental
+     * @return the gated configuration, or null if the version is not gated
      */
-    public ExperimentalConfig getExperimentalConfig() {
-        return experimentalConfig;
+    public GatedConfig getGatedConfig() {
+        return gatedConfig;
     }
 
     /**
-     * Sets the experimental configuration.
+     * Sets the gated configuration.
      *
-     * @param experimentalConfig the experimental configuration
+     * @param gatedConfig the gated configuration
      */
-    public void setExperimentalConfig(ExperimentalConfig experimentalConfig) {
-        this.experimentalConfig = experimentalConfig;
+    public void setGatedConfig(GatedConfig gatedConfig) {
+        this.gatedConfig = gatedConfig;
     }
 
     /**
      * Checks if this is the "production" live version.
      * <p>
      * The live version is used by the agent by default, if there are no
-     * experimental versions or all of them have exceeded their limit.
+     * gated versions or all of them have exceeded their limit.
      *
      * @return true if this is the live version
      */
@@ -198,8 +198,8 @@ public class ProcedureVersion {
                 ", version=" + version +
                 ", author='" + author + '\'' +
                 ", created=" + created +
-                ", experimental=" + experimental +
-                ", experimentalConfig=" + experimentalConfig +
+                ", gated=" + gated +
+                ", gatedConfig=" + gatedConfig +
                 ", live=" + live +
                 '}';
     }
