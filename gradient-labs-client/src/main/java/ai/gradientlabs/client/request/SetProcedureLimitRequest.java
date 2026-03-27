@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Parameters for setting a procedure's daily usage limit.
  * <p>
- * Use this to configure experimental procedures to have a limited usage per day.
+ * Use this to configure gated procedures to have a limited usage per day.
  * <p>
  * <strong>Note:</strong> Requires a Management API key.
  */

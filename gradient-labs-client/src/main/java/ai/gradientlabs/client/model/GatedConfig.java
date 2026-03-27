@@ -3,17 +3,17 @@ package ai.gradientlabs.client.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Configuration for experimental procedure versions.
+ * Configuration for gated procedure versions.
  * <p>
  * Defines daily limits for testing new procedure versions before full rollout.
  */
-public class ExperimentalConfig {
+public class GatedConfig {
 
     @JsonProperty("max_daily_conversations")
     private int maxDailyConversations;
 
     /**
-     * Gets the maximum number of conversations per day that can use this experimental version.
+     * Gets the maximum number of conversations per day that can use the gated version.
      *
      * @return the maximum daily conversations
      */
@@ -32,7 +32,7 @@ public class ExperimentalConfig {
 
     @Override
     public String toString() {
-        return "ExperimentalConfig{" +
+        return "GatedConfig{" +
                 "maxDailyConversations=" + maxDailyConversations +
                 '}';
     }
