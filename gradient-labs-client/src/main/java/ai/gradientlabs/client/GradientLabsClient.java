@@ -1015,6 +1015,31 @@ public class GradientLabsClient {
         httpClient.delete(path, Void.class);
     }
 
+    // ==================== Back Office Task Operations ====================
+
+    /**
+     * Creates a new back office task for an AI agent to process.
+     *
+     * @param request the task creation parameters
+     * @return the created back office task
+     * @throws GradientLabsException if the request fails
+     */
+    public BackOfficeTask createBackOfficeTask(CreateBackOfficeTaskRequest request) {
+        return httpClient.post("/back-office-tasks", request, BackOfficeTask.class);
+    }
+
+    /**
+     * Retrieves a back office task by ID.
+     *
+     * @param taskId the task ID
+     * @return the back office task
+     * @throws GradientLabsException if the request fails
+     */
+    public BackOfficeTask readBackOfficeTask(String taskId) {
+        String path = String.format("/back-office-tasks/%s/read", taskId);
+        return httpClient.get(path, null, BackOfficeTask.class);
+    }
+
     // ==================== Voice Call Context Operations ====================
 
     /**
