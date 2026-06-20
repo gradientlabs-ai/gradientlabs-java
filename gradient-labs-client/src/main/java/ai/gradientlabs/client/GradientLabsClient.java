@@ -1015,6 +1015,32 @@ public class GradientLabsClient {
         httpClient.delete(path, Void.class);
     }
 
+    // ==================== Voice Call Context Operations ====================
+
+    /**
+     * Retrieves the context from the most recent voice call for a given phone number.
+     *
+     * @param phoneNumber the phone number to look up
+     * @param request     optional query parameters (lookbackSeconds, includeLargeFields)
+     * @return the voice call context
+     * @throws GradientLabsException if the request fails
+     */
+    public VoiceCallContext readVoiceCallContext(String phoneNumber, ReadVoiceCallContextRequest request) {
+        StringBuilder path = new StringBuilder(String.format("/voice/latest-call-context/%s", phoneNumber));
+        if (request != null) {
+            boolean hasParam = false;
+            if (request.getLookbackSeconds() != null) {
+                path.append("?lookback_seconds=").append(request.getLookbackSeconds());
+                hasParam = true;
+            }
+            if (request.getIncludeLargeFields() != null) {
+                path.append(hasParam ? "&" : "?");
+                path.append("include_large_fields=").append(request.getIncludeLargeFields());
+            }
+        }
+        return httpClient.get(path.toString(), null, VoiceCallContext.class);
+    }
+
     // ==================== Webhook Operations ====================
 
     /**
