@@ -166,34 +166,36 @@ public class GradientLabsClient {
      * Cancels a conversation.
      *
      * @param conversationId the conversation ID
+     * @param request        optional cancel parameters (timestamp, reason)
      * @throws GradientLabsException if the request fails
      */
-    public void cancelConversation(String conversationId) {
+    public void cancelConversation(String conversationId, CancelConversationRequest request) {
         String path = String.format("/conversations/%s/cancel", conversationId);
-        httpClient.put(path, null, Void.class);
+        httpClient.put(path, request, Void.class);
     }
 
     /**
-     * Resumes a conversation.
+     * Resumes a finished conversation by reassigning it.
      *
      * @param conversationId the conversation ID
+     * @param request        resume parameters (assigneeType required)
      * @throws GradientLabsException if the request fails
      */
-    public void resumeConversation(String conversationId) {
+    public void resumeConversation(String conversationId, ResumeConversationRequest request) {
         String path = String.format("/conversations/%s/resume", conversationId);
-        httpClient.put(path, null, Void.class);
+        httpClient.put(path, request, Void.class);
     }
 
     /**
-     * Rates a conversation.
+     * Submits a customer (CSAT) rating for a conversation.
      *
      * @param conversationId the conversation ID
-     * @param rating         the rating value
+     * @param request        the rating parameters (type, value, maxValue, minValue required)
      * @throws GradientLabsException if the request fails
      */
-    public void rateConversation(String conversationId, int rating) {
+    public void rateConversation(String conversationId, RateConversationRequest request) {
         String path = String.format("/conversations/%s/rate", conversationId);
-        httpClient.put(path, new RatingRequest(rating), Void.class);
+        httpClient.put(path, request, Void.class);
     }
 
     /**
@@ -1112,15 +1114,4 @@ public class GradientLabsClient {
         }
     }
 
-    private static class RatingRequest {
-        private final int rating;
-
-        public RatingRequest(int rating) {
-            this.rating = rating;
-        }
-
-        public int getRating() {
-            return rating;
-        }
-    }
 }
