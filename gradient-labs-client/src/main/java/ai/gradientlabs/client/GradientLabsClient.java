@@ -1015,6 +1015,20 @@ public class GradientLabsClient {
         httpClient.delete(path, Void.class);
     }
 
+    // ==================== IP Address Operations ====================
+
+    /**
+     * Lists the IP address ranges used by the Gradient Labs platform.
+     * <p>
+     * Use this to configure your firewall or allowlist to permit traffic from Gradient Labs.
+     *
+     * @return the platform IP addresses (api ranges and egress ranges)
+     * @throws GradientLabsException if the request fails
+     */
+    public IPAddresses listIpAddresses() {
+        return httpClient.get("/ip-addresses", null, IPAddresses.class);
+    }
+
     // ==================== Terminology Substitution Operations ====================
 
     /**
