@@ -1015,6 +1015,75 @@ public class GradientLabsClient {
         httpClient.delete(path, Void.class);
     }
 
+    // ==================== Terminology Substitution Operations ====================
+
+    /**
+     * Creates a new terminology substitution rule.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the substitution parameters
+     * @return the created terminology substitution
+     * @throws GradientLabsException if the request fails
+     */
+    public TerminologySubstitution createTerminologySubstitution(CreateTerminologySubstitutionRequest request) {
+        return httpClient.post("/terminology-substitutions", request, TerminologySubstitution.class);
+    }
+
+    /**
+     * Lists all terminology substitution rules.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @return list of terminology substitutions
+     * @throws GradientLabsException if the request fails
+     */
+    public List<TerminologySubstitution> listTerminologySubstitutions() {
+        return httpClient.getList("/terminology-substitutions", null, TerminologySubstitution.class);
+    }
+
+    /**
+     * Retrieves a terminology substitution rule by ID.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param substitutionId the substitution ID
+     * @return the terminology substitution
+     * @throws GradientLabsException if the request fails
+     */
+    public TerminologySubstitution readTerminologySubstitution(String substitutionId) {
+        String path = String.format("/terminology-substitutions/%s", substitutionId);
+        return httpClient.get(path, null, TerminologySubstitution.class);
+    }
+
+    /**
+     * Updates an existing terminology substitution rule.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param substitutionId the substitution ID
+     * @param request        the update parameters
+     * @return the updated terminology substitution
+     * @throws GradientLabsException if the request fails
+     */
+    public TerminologySubstitution updateTerminologySubstitution(String substitutionId, UpdateTerminologySubstitutionRequest request) {
+        String path = String.format("/terminology-substitutions/%s", substitutionId);
+        return httpClient.put(path, request, TerminologySubstitution.class);
+    }
+
+    /**
+     * Deletes a terminology substitution rule.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param substitutionId the substitution ID to delete
+     * @throws GradientLabsException if the request fails
+     */
+    public void deleteTerminologySubstitution(String substitutionId) {
+        String path = String.format("/terminology-substitutions/%s", substitutionId);
+        httpClient.delete(path, Void.class);
+    }
+
     // ==================== Back Office Task Operations ====================
 
     /**
