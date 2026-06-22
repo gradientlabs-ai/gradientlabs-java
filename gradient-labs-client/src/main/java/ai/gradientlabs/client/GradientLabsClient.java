@@ -986,6 +986,35 @@ public class GradientLabsClient {
         httpClient.delete(path, Void.class);
     }
 
+    /**
+     * Adds an exclusion to a traffic group.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param groupId the traffic group ID
+     * @param request the exclusion parameters
+     * @return the created traffic group target representing the exclusion
+     * @throws GradientLabsException if the request fails
+     */
+    public TrafficGroupTarget createTrafficGroupExclusion(String groupId, CreateTrafficGroupExclusionRequest request) {
+        String path = String.format("/traffic-groups/%s/exclusions", groupId);
+        return httpClient.post(path, request, TrafficGroupTarget.class);
+    }
+
+    /**
+     * Removes an exclusion from a traffic group.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param groupId  the traffic group ID
+     * @param targetId the exclusion target ID to remove
+     * @throws GradientLabsException if the request fails
+     */
+    public void deleteTrafficGroupExclusion(String groupId, String targetId) {
+        String path = String.format("/traffic-groups/%s/exclusions/%s", groupId, targetId);
+        httpClient.delete(path, Void.class);
+    }
+
     // ==================== Webhook Operations ====================
 
     /**
