@@ -134,8 +134,8 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void assignConversation(String conversationId, AssignmentRequest request) {
-        String path = String.format("/conversations/%s/assign", conversationId);
-        httpClient.post(path, request, Void.class);
+        String path = String.format("/conversations/%s/assignee", conversationId);
+        httpClient.put(path, request, Void.class);
     }
 
     /**
@@ -159,7 +159,7 @@ public class GradientLabsClient {
      */
     public void finishConversation(String conversationId, FinishConversationRequest request) {
         String path = String.format("/conversations/%s/finish", conversationId);
-        httpClient.post(path, request, Void.class);
+        httpClient.put(path, request, Void.class);
     }
 
     /**
@@ -170,7 +170,7 @@ public class GradientLabsClient {
      */
     public void cancelConversation(String conversationId) {
         String path = String.format("/conversations/%s/cancel", conversationId);
-        httpClient.post(path, null, Void.class);
+        httpClient.put(path, null, Void.class);
     }
 
     /**
@@ -181,7 +181,7 @@ public class GradientLabsClient {
      */
     public void resumeConversation(String conversationId) {
         String path = String.format("/conversations/%s/resume", conversationId);
-        httpClient.post(path, null, Void.class);
+        httpClient.put(path, null, Void.class);
     }
 
     /**
@@ -193,7 +193,7 @@ public class GradientLabsClient {
      */
     public void rateConversation(String conversationId, int rating) {
         String path = String.format("/conversations/%s/rate", conversationId);
-        httpClient.post(path, new RatingRequest(rating), Void.class);
+        httpClient.put(path, new RatingRequest(rating), Void.class);
     }
 
     /**
