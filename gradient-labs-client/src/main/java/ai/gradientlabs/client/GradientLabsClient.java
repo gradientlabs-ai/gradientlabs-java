@@ -7,7 +7,7 @@ import ai.gradientlabs.client.request.*;
 import ai.gradientlabs.client.webhook.Webhook;
 import ai.gradientlabs.client.webhook.WebhookVerifier;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.List;
