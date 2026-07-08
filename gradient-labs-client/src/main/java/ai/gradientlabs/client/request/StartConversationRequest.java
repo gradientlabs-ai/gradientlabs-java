@@ -1,12 +1,15 @@
 package ai.gradientlabs.client.request;
 
 import ai.gradientlabs.client.model.Channel;
+import ai.gradientlabs.client.model.CustomerSupportPlatformIdentifier;
 import ai.gradientlabs.client.model.ParticipantType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,6 +48,9 @@ public class StartConversationRequest {
     @JsonProperty("traffic_group_id")
     private final String trafficGroupId;
 
+    @JsonProperty("customer_support_platform_identifiers")
+    private final List<CustomerSupportPlatformIdentifier> customerSupportPlatformIdentifiers;
+
     private StartConversationRequest(Builder builder) {
         this.id = builder.id;
         this.customerId = builder.customerId;
@@ -56,6 +62,7 @@ public class StartConversationRequest {
         this.resources = builder.resources;
         this.conversationToken = builder.conversationToken;
         this.trafficGroupId = builder.trafficGroupId;
+        this.customerSupportPlatformIdentifiers = builder.customerSupportPlatformIdentifiers;
     }
 
     public static Builder builder() {
@@ -107,6 +114,15 @@ public class StartConversationRequest {
         return trafficGroupId;
     }
 
+    /**
+     * Gets the customer's identifiers in third-party customer support platforms.
+     *
+     * @return the customer support platform identifiers, or null if none were set
+     */
+    public List<CustomerSupportPlatformIdentifier> getCustomerSupportPlatformIdentifiers() {
+        return customerSupportPlatformIdentifiers;
+    }
+
     public static class Builder {
         private String id;
         private String customerId;
@@ -118,6 +134,7 @@ public class StartConversationRequest {
         private Map<String, Object> resources;
         private String conversationToken;
         private String trafficGroupId;
+        private List<CustomerSupportPlatformIdentifier> customerSupportPlatformIdentifiers;
 
         private Builder() {
         }
@@ -282,6 +299,35 @@ public class StartConversationRequest {
          */
         public Builder trafficGroupId(String trafficGroupId) {
             this.trafficGroupId = trafficGroupId;
+            return this;
+        }
+
+        /**
+         * Sets the customer's identifiers in third-party customer support platforms (optional).
+         * <p>
+         * Links the customer being created to their record(s) in platforms such as Intercom
+         * or Zendesk, alongside {@code customerId}. Each identifier's {@code type} is only
+         * required (and only validated) for intercom, zendesk, and salesforce.
+         *
+         * @param customerSupportPlatformIdentifiers the customer support platform identifiers
+         * @return this builder
+         */
+        public Builder customerSupportPlatformIdentifiers(List<CustomerSupportPlatformIdentifier> customerSupportPlatformIdentifiers) {
+            this.customerSupportPlatformIdentifiers = customerSupportPlatformIdentifiers;
+            return this;
+        }
+
+        /**
+         * Adds a single customer support platform identifier.
+         *
+         * @param customerSupportPlatformIdentifier the identifier to add
+         * @return this builder
+         */
+        public Builder addCustomerSupportPlatformIdentifier(CustomerSupportPlatformIdentifier customerSupportPlatformIdentifier) {
+            if (this.customerSupportPlatformIdentifiers == null) {
+                this.customerSupportPlatformIdentifiers = new ArrayList<>();
+            }
+            this.customerSupportPlatformIdentifiers.add(customerSupportPlatformIdentifier);
             return this;
         }
 
