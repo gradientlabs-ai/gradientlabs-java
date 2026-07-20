@@ -227,6 +227,22 @@ public class GradientLabsClient {
         httpClient.put(path, request, Void.class);
     }
 
+    /**
+     * Deletes a conversation.
+     * <p>
+     * Deletion is performed asynchronously; a successful call is acknowledged
+     * with a 202 Accepted response.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param conversationId the conversation ID
+     * @throws GradientLabsException if the request fails
+     */
+    public void deleteConversation(String conversationId) {
+        String path = String.format("/conversations/%s", conversationId);
+        httpClient.delete(path, Void.class);
+    }
+
     // ==================== Tool Operations ====================
 
     /**
@@ -1121,6 +1137,22 @@ public class GradientLabsClient {
     public BackOfficeTask readBackOfficeTask(String taskId) {
         String path = String.format("/back-office-tasks/%s/read", taskId);
         return httpClient.get(path, null, BackOfficeTask.class);
+    }
+
+    /**
+     * Deletes a back office task.
+     * <p>
+     * Deletion is performed asynchronously; a successful call is acknowledged
+     * with a 202 Accepted response.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param taskId the task ID
+     * @throws GradientLabsException if the request fails
+     */
+    public void deleteBackOfficeTask(String taskId) {
+        String path = String.format("/back-office-tasks/%s", taskId);
+        httpClient.delete(path, Void.class);
     }
 
     // ==================== Voice Call Context Operations ====================
