@@ -12,8 +12,12 @@ public class FinishConversationRequest {
     @JsonProperty("reason")
     private final String reason;
 
+    @JsonProperty("reason_code")
+    private final String reasonCode;
+
     private FinishConversationRequest(Builder builder) {
         this.reason = builder.reason;
+        this.reasonCode = builder.reasonCode;
     }
 
     public static Builder builder() {
@@ -28,14 +32,24 @@ public class FinishConversationRequest {
         return reason;
     }
 
+    public String getReasonCode() {
+        return reasonCode;
+    }
+
     public static class Builder {
         private String reason;
+        private String reasonCode;
 
         private Builder() {
         }
 
         public Builder reason(String reason) {
             this.reason = reason;
+            return this;
+        }
+
+        public Builder reasonCode(String reasonCode) {
+            this.reasonCode = reasonCode;
             return this;
         }
 
