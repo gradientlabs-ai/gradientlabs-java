@@ -243,6 +243,24 @@ public class GradientLabsClient {
         httpClient.delete(path, Void.class);
     }
 
+    /**
+     * Bulk uploads a batch of memories scoped to a conversation.
+     * <p>
+     * Memories are stored verbatim as raw JSON payloads for the AI agent to search
+     * over on demand during the conversation. The request's idempotency key
+     * de-duplicates retries: re-uploading with the same key returns the original
+     * upload instead of inserting again.
+     *
+     * @param conversationId the conversation ID
+     * @param request        the memories to upload
+     * @return the upload result (upload ID and number of memories inserted)
+     * @throws GradientLabsException if the request fails
+     */
+    public ai.gradientlabs.client.response.ConversationMemoriesBulkUploadResponse bulkUploadConversationMemories(String conversationId, ConversationMemoriesBulkUploadRequest request) {
+        String path = String.format("/conversations/%s/memories", conversationId);
+        return httpClient.post(path, request, ai.gradientlabs.client.response.ConversationMemoriesBulkUploadResponse.class);
+    }
+
     // ==================== Tool Operations ====================
 
     /**
