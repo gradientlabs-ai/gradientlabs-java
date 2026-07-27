@@ -244,21 +244,21 @@ public class GradientLabsClient {
     }
 
     /**
-     * Bulk uploads a batch of memories scoped to a conversation.
+     * Batch-creates a set of memories scoped to a customer.
      * <p>
-     * Memories are stored verbatim as raw JSON payloads for the AI agent to search
-     * over on demand during the conversation. The request's idempotency key
-     * de-duplicates retries: re-uploading with the same key returns the original
-     * upload instead of inserting again.
+     * Each memory's {@code data} payload is stored verbatim as arbitrary JSON for
+     * the AI agent to search over on demand. The batch is created asynchronously:
+     * the call returns as soon as the job is accepted and yields no result. A
+     * {@link GradientLabsException} carrying HTTP 409 is thrown when a batch is
+     * already being created for the same customer.
      *
-     * @param conversationId the conversation ID
-     * @param request        the memories to upload
-     * @return the upload result (upload ID and number of memories inserted)
+     * @param customerId the customer ID
+     * @param request    the memories to create
      * @throws GradientLabsException if the request fails
      */
-    public ai.gradientlabs.client.response.ConversationMemoriesBulkUploadResponse bulkUploadConversationMemories(String conversationId, ConversationMemoriesBulkUploadRequest request) {
-        String path = String.format("/conversations/%s/memories", conversationId);
-        return httpClient.post(path, request, ai.gradientlabs.client.response.ConversationMemoriesBulkUploadResponse.class);
+    public void batchCreateCustomerMemories(String customerId, BatchCreateCustomerMemoriesRequest request) {
+        String path = String.format("/customers/%s/memories", customerId);
+        httpClient.post(path, request, Void.class);
     }
 
     // ==================== Tool Operations ====================
