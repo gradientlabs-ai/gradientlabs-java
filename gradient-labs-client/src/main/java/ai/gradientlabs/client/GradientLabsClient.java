@@ -243,6 +243,24 @@ public class GradientLabsClient {
         httpClient.delete(path, Void.class);
     }
 
+    /**
+     * Batch-creates a set of memories scoped to a customer.
+     * <p>
+     * Each memory's {@code data} payload is stored verbatim as arbitrary JSON for
+     * the AI agent to search over on demand. The batch is created asynchronously:
+     * the call returns as soon as the job is accepted and yields no result. A
+     * {@link GradientLabsException} carrying HTTP 409 is thrown when a batch is
+     * already being created for the same customer.
+     *
+     * @param customerId the customer ID
+     * @param request    the memories to create
+     * @throws GradientLabsException if the request fails
+     */
+    public void batchCreateCustomerMemories(String customerId, BatchCreateCustomerMemoriesRequest request) {
+        String path = String.format("/customers/%s/memories", customerId);
+        httpClient.post(path, request, Void.class);
+    }
+
     // ==================== Tool Operations ====================
 
     /**
