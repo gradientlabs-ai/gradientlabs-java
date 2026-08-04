@@ -23,14 +23,14 @@ For Spring Boot applications, use the starter dependency for zero-configuration 
 <dependency>
     <groupId>ai.gradientlabs</groupId>
     <artifactId>gradient-labs-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'ai.gradientlabs:gradient-labs-spring-boot-starter:1.0.0'
+implementation 'ai.gradientlabs:gradient-labs-spring-boot-starter:1.0.2'
 ```
 
 ### Configuration
@@ -95,14 +95,14 @@ For non-Spring applications, use the core client library:
 <dependency>
     <groupId>ai.gradientlabs</groupId>
     <artifactId>gradient-labs-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'ai.gradientlabs:gradient-labs-client:1.0.0'
+implementation 'ai.gradientlabs:gradient-labs-client:1.0.2'
 ```
 
 ## Error Handling
