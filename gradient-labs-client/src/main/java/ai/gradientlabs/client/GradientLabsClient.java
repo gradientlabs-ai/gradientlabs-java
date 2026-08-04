@@ -4,6 +4,7 @@ import ai.gradientlabs.client.exception.GradientLabsException;
 import ai.gradientlabs.client.internal.HttpClientWrapper;
 import ai.gradientlabs.client.model.*;
 import ai.gradientlabs.client.request.*;
+import ai.gradientlabs.client.response.StartOutboundConversationResponse;
 import ai.gradientlabs.client.webhook.Webhook;
 import ai.gradientlabs.client.webhook.WebhookVerifier;
 
@@ -80,24 +81,68 @@ public class GradientLabsClient {
     }
 
     /**
-     * Starts an outbound conversation.
+     * Starts an outbound live chat conversation.
      * <p>
-     * Creates and starts a new outbound conversation where the AI agent proactively
-     * initiates contact with a customer. The conversation follows the instructions
-     * defined in the specified outbound procedure.
+     * Creates and starts a new outbound live chat conversation in which the AI agent
+     * proactively initiates contact with a customer, following the instructions defined in
+     * the specified outbound procedure.
      * <p>
-     * If support_platform is not provided, the system will automatically select the
-     * highest priority platform that has integration settings configured for your company.
+     * If a body is provided, that message will be sent as the opening message. Otherwise,
+     * the AI agent will generate one based on the procedure.
      * <p>
-     * If body and subject are provided, that message will be sent as the initial message.
-     * Otherwise, the AI agent will generate an appropriate initial message based on the procedure.
+     * The customer is created, or matched to an existing record, from the customer ID and
+     * any customer support platform identifiers you supply. The platform the chat is
+     * delivered on needs an identifier for that customer.
      *
-     * @param request the outbound conversation parameters
+     * @param request the outbound chat conversation parameters
      * @return the response containing the conversation ID
      * @throws GradientLabsException if the request fails
      */
-    public ai.gradientlabs.client.response.StartOutboundConversationResponse startOutboundConversation(StartOutboundConversationRequest request) {
-        return httpClient.post("/outbound/conversations", request, ai.gradientlabs.client.response.StartOutboundConversationResponse.class);
+    public StartOutboundConversationResponse startOutboundChatConversation(StartOutboundChatConversationRequest request) {
+        return httpClient.post("/outbound/conversations/chat", request, StartOutboundConversationResponse.class);
+    }
+
+    /**
+     * Starts an outbound email conversation.
+     * <p>
+     * Creates and starts a new outbound email conversation in which the AI agent
+     * proactively initiates contact with a customer, following the instructions defined in
+     * the specified outbound procedure.
+     * <p>
+     * If a subject and body are provided, that email will be sent as the opening message.
+     * Otherwise, the AI agent will write one based on the procedure.
+     * <p>
+     * The customer is created, or matched to an existing record, from the customer ID and
+     * any customer support platform identifiers you supply. The platform the email is sent
+     * from needs an identifier for that customer, so sending from Zendesk needs a Zendesk
+     * identifier, and so on.
+     *
+     * @param request the outbound email conversation parameters
+     * @return the response containing the conversation ID
+     * @throws GradientLabsException if the request fails
+     */
+    public StartOutboundConversationResponse startOutboundEmailConversation(StartOutboundEmailConversationRequest request) {
+        return httpClient.post("/outbound/conversations/email", request, StartOutboundConversationResponse.class);
+    }
+
+    /**
+     * Places an outbound phone call.
+     * <p>
+     * Places an outbound phone call in which the AI agent proactively contacts a customer,
+     * following the instructions defined in the specified outbound procedure.
+     * <p>
+     * The number the call is placed from must already be provisioned for your company.
+     * <p>
+     * The customer is created, or matched to an existing record, from the customer ID and
+     * any customer support platform identifiers you supply. The dialled number is recorded
+     * against that same customer.
+     *
+     * @param request the outbound phone conversation parameters
+     * @return the response containing the conversation ID
+     * @throws GradientLabsException if the request fails
+     */
+    public StartOutboundConversationResponse startOutboundPhoneConversation(StartOutboundPhoneConversationRequest request) {
+        return httpClient.post("/outbound/conversations/phone", request, StartOutboundConversationResponse.class);
     }
 
     /**

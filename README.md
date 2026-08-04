@@ -10,7 +10,7 @@ Java client library for the [Gradient Labs API](https://api-docs.gradient-labs.a
 - Type-safe models and enums
 - Webhook signature verification
 - Comprehensive error handling
-- Java 11+ compatible
+- Java 17+ compatible
 - Zero runtime dependencies (except Jackson)
 
 ## Spring Boot Integration
@@ -23,14 +23,14 @@ For Spring Boot applications, use the starter dependency for zero-configuration 
 <dependency>
     <groupId>ai.gradientlabs</groupId>
     <artifactId>gradient-labs-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'ai.gradientlabs:gradient-labs-spring-boot-starter:1.0.0'
+implementation 'ai.gradientlabs:gradient-labs-spring-boot-starter:1.0.2'
 ```
 
 ### Configuration
@@ -95,14 +95,14 @@ For non-Spring applications, use the core client library:
 <dependency>
     <groupId>ai.gradientlabs</groupId>
     <artifactId>gradient-labs-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'ai.gradientlabs:gradient-labs-client:1.0.0'
+implementation 'ai.gradientlabs:gradient-labs-client:1.0.2'
 ```
 
 ## Error Handling
@@ -167,7 +167,7 @@ GradientLabsClient client = GradientLabsClient.builder()
 
 ## Requirements
 
-- Java 11 or higher
+- Java 17 or higher
 - Jackson 2.18+ for JSON serialization
 
 ## Documentation

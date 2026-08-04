@@ -7,7 +7,7 @@
     <parent>
         <groupId>ai.gradientlabs</groupId>
         <artifactId>gradient-labs-parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.2</version>
     </parent>
 
     <artifactId>gradient-labs-client</artifactId>
@@ -71,6 +71,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <!-- Implementation-Version in the manifest is what the User-Agent reports;
+                 without it the client identifies itself as "dev". -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>

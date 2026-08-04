@@ -14,7 +14,7 @@ This example demonstrates how to use the Gradient Labs Spring Boot Starter for z
 
 ### Prerequisites
 
-- Java 11 or higher
+- Java 17 or higher
 - Maven
 - Gradient Labs API key
 
