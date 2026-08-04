@@ -252,7 +252,7 @@ The starter includes Spring Boot configuration metadata for IDE autocomplete sup
 
 ## Requirements
 
-- Java 11 or higher
+- Java 17 or higher
 - Spring Boot 3.2.0 or higher
 - The core `gradient-labs-client` library (automatically included as a transitive dependency)
 
