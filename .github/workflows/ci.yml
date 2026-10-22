@@ -12,11 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      # Oracle JDK 25 is the first freely available build with the eMudhra CA
+      # fix (25.0.5.0.2); Temurin hasn't shipped one yet. The bytecode target
+      # stays Java 17 via maven.compiler.release in the root pom.
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: '25'
+          distribution: 'oracle'
           cache: maven
 
       - name: Build and test
