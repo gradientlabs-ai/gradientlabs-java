@@ -170,6 +170,21 @@ GradientLabsClient client = GradientLabsClient.builder()
 - Java 17 or higher
 - Jackson 2.18+ for JSON serialization
 
+### Security: eMudhra certificate authority compromise
+
+The client uses the JDK's built-in `HttpClient`, which trusts the CA
+certificates bundled with your JDK (`cacerts`), not the operating system's
+store. JDKs up to and including 27.0.1, 25.0.5, 21.0.13 and 17.0.21 still
+trust the eMudhra intermediate certificate authorities compromised in
+October 2026, which would let an attacker impersonate the Gradient Labs API
+and capture your API key.
+
+Run JDK 27.0.1.0.2, 25.0.5.0.2, 21.0.13.0.2, 17.0.21.0.2, or the equivalent
+fixed build from your JDK vendor. JDKs installed from Linux distribution
+packages use the OS certificate store, so updating the OS CA certificates is
+enough for those. See the
+[OpenJDK advisory](https://openjdk.org/groups/vulnerability/advisories/2026-10-21).
+
 ## Documentation
 
 - [API Documentation](https://api-docs.gradient-labs.ai)
