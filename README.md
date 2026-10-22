@@ -185,6 +185,12 @@ packages use the OS certificate store, so updating the OS CA certificates is
 enough for those. See the
 [OpenJDK advisory](https://openjdk.org/groups/vulnerability/advisories/2026-10-21).
 
+If your JDK vendor hasn't shipped a fixed build yet, Oracle's
+[advisory](https://ops.java/emudhra) describes two workarounds: replace
+`$JAVA_HOME/lib/security/blocked.certs` with the version it links to, or
+enable revocation checking with
+`-Dcom.sun.net.ssl.checkRevocation=true -Dcom.sun.security.enableCRLDP=true`.
+
 ## Documentation
 
 - [API Documentation](https://api-docs.gradient-labs.ai)
