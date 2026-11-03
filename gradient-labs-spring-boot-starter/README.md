@@ -18,7 +18,7 @@ This starter provides zero-configuration setup for Spring Boot applications usin
 
 ```xml
 <dependency>
-    <groupId>ai.gradientlabs</groupId>
+    <groupId>ai.gradient-labs</groupId>
     <artifactId>gradient-labs-spring-boot-starter</artifactId>
     <version>1.0.2</version>
 </dependency>
@@ -27,7 +27,7 @@ This starter provides zero-configuration setup for Spring Boot applications usin
 ### Gradle
 
 ```gradle
-implementation 'ai.gradientlabs:gradient-labs-spring-boot-starter:1.0.2'
+implementation 'ai.gradient-labs:gradient-labs-spring-boot-starter:1.0.2'
 ```
 
 ## Configuration
@@ -260,7 +260,7 @@ The starter includes Spring Boot configuration metadata for IDE autocomplete sup
 
 - [Main README](../README.md) - Core client documentation
 - [API Documentation](https://api-docs.gradient-labs.ai) - Gradient Labs API reference
-- [Javadoc](https://javadoc.io/doc/ai.gradientlabs/gradient-labs-client) - Client API reference
+- [Javadoc](https://javadoc.io/doc/ai.gradient-labs/gradient-labs-client) - Client API reference
 
 ## Support
 

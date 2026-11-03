@@ -1,6 +1,6 @@
 # Gradient Labs Java Client
-[![Maven Central](https://img.shields.io/maven-central/v/ai.gradientlabs/gradient-labs-client.svg)](https://central.sonatype.com/artifact/ai.gradientlabs/gradient-labs-client)
-[![Javadoc](https://javadoc.io/badge2/ai.gradientlabs/gradient-labs-client/javadoc.svg)](https://javadoc.io/doc/ai.gradientlabs/gradient-labs-client)
+[![Maven Central](https://img.shields.io/maven-central/v/ai.gradient-labs/gradient-labs-client.svg)](https://central.sonatype.com/artifact/ai.gradient-labs/gradient-labs-client)
+[![Javadoc](https://javadoc.io/badge2/ai.gradient-labs/gradient-labs-client/javadoc.svg)](https://javadoc.io/doc/ai.gradient-labs/gradient-labs-client)
 
 Java client library for the [Gradient Labs API](https://api-docs.gradient-labs.ai).
 
@@ -21,7 +21,7 @@ For Spring Boot applications, use the starter dependency for zero-configuration 
 
 ```xml
 <dependency>
-    <groupId>ai.gradientlabs</groupId>
+    <groupId>ai.gradient-labs</groupId>
     <artifactId>gradient-labs-spring-boot-starter</artifactId>
     <version>1.0.2</version>
 </dependency>
@@ -30,7 +30,7 @@ For Spring Boot applications, use the starter dependency for zero-configuration 
 ### Gradle
 
 ```gradle
-implementation 'ai.gradientlabs:gradient-labs-spring-boot-starter:1.0.2'
+implementation 'ai.gradient-labs:gradient-labs-spring-boot-starter:1.0.2'
 ```
 
 ### Configuration
@@ -93,7 +93,7 @@ For non-Spring applications, use the core client library:
 
 ```xml
 <dependency>
-    <groupId>ai.gradientlabs</groupId>
+    <groupId>ai.gradient-labs</groupId>
     <artifactId>gradient-labs-client</artifactId>
     <version>1.0.2</version>
 </dependency>
@@ -102,7 +102,7 @@ For non-Spring applications, use the core client library:
 ### Gradle
 
 ```gradle
-implementation 'ai.gradientlabs:gradient-labs-client:1.0.2'
+implementation 'ai.gradient-labs:gradient-labs-client:1.0.2'
 ```
 
 ## Error Handling
@@ -194,7 +194,7 @@ enable revocation checking with
 ## Documentation
 
 - [API Documentation](https://api-docs.gradient-labs.ai)
-- [Javadoc](https://javadoc.io/doc/ai.gradientlabs/gradient-labs-client)
+- [Javadoc](https://javadoc.io/doc/ai.gradient-labs/gradient-labs-client)
 - [Design Document](DESIGN.md)
 
 ## Examples
