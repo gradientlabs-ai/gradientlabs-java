@@ -3,26 +3,28 @@ package ai.gradientlabs.client.model;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Describes who can view the given item (e.g., help article or topic).
+ * Who can see an article or topic.
  */
 public enum Visibility {
     /**
-     * The item is available to the general public.
-     * For example, it is published on a public website.
+     * Anyone can see it.
      */
     PUBLIC("public"),
 
     /**
-     * The item is only available to the company's customers.
-     * For example, it is only accessible via an app after sign-up.
+     * Only signed-in users can see it.
      */
     USERS("users"),
 
     /**
-     * The item is only available to the company's employees.
-     * For example, it is a procedure or SOP that customers do not have access to.
+     * Only your staff can see it.
      */
-    INTERNAL("internal");
+    INTERNAL("internal"),
+
+    /**
+     * The support platform did not say. Only returned when reading topics.
+     */
+    UNKNOWN("unknown");
 
     private final String value;
 

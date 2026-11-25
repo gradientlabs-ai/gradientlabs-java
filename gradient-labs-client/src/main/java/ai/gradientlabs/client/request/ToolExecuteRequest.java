@@ -1,6 +1,7 @@
 package ai.gradientlabs.client.request;
 
 import ai.gradientlabs.client.model.Argument;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -9,10 +10,14 @@ import java.util.List;
 /**
  * Request to execute a tool.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ToolExecuteRequest {
 
     @JsonProperty("arguments")
     private List<Argument> arguments;
+
+    @JsonProperty("token")
+    private String token;
 
     /**
      * Creates a new tool execute request.
@@ -58,5 +63,18 @@ public class ToolExecuteRequest {
     public ToolExecuteRequest addArgument(String name, String value) {
         this.arguments.add(new Argument(name, value));
         return this;
+    }
+
+    /**
+     * Returns the conversation token to run the tool with, if it needs one.
+     *
+     * @return the token
+     */
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -139,10 +139,48 @@ public class Webhook {
     /**
      * Returns the data for a {@code resource.pull} event.
      *
-     * @return the event data, or null if this is not a resource pull event
+     * @deprecated Resource fetches use {@link #asActionExecute()}.
+     * @return the legacy event data
      */
+    @Deprecated
     public ResourcePullEvent asResourcePull() {
         return data instanceof ResourcePullEvent ? (ResourcePullEvent) data : null;
+    }
+
+    /**
+     * Returns the data for a {@code conversation.start} event.
+     *
+     * @return the event data, or null if this is not a conversation start event
+     */
+    public ConversationStartEvent asConversationStart() {
+        return data instanceof ConversationStartEvent ? (ConversationStartEvent) data : null;
+    }
+
+    /**
+     * Returns the data for a {@code back-office-task.complete} event.
+     *
+     * @return the event data, or null if this is not a back-office task complete event
+     */
+    public BackOfficeTaskCompleteEvent asBackOfficeTaskComplete() {
+        return data instanceof BackOfficeTaskCompleteEvent ? (BackOfficeTaskCompleteEvent) data : null;
+    }
+
+    /**
+     * Returns the data for a {@code back-office-task.hand-off} event.
+     *
+     * @return the event data, or null if this is not a back-office task hand-off event
+     */
+    public BackOfficeTaskHandOffEvent asBackOfficeTaskHandOff() {
+        return data instanceof BackOfficeTaskHandOffEvent ? (BackOfficeTaskHandOffEvent) data : null;
+    }
+
+    /**
+     * Returns the data for a {@code back-office-task.fail} event.
+     *
+     * @return the event data, or null if this is not a back-office task fail event
+     */
+    public BackOfficeTaskFailEvent asBackOfficeTaskFail() {
+        return data instanceof BackOfficeTaskFailEvent ? (BackOfficeTaskFailEvent) data : null;
     }
 
     @Override

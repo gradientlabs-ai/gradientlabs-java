@@ -16,6 +16,12 @@ public class Attachment {
     @JsonProperty("description")
     private String description;
 
+    @JsonProperty("summary")
+    private String summary;
+
+    @JsonProperty("url")
+    private String url;
+
     /**
      * Default constructor for Jackson.
      */
@@ -68,6 +74,32 @@ public class Attachment {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * Returns a summary of the attachment's contents.
+     *
+     * @return the summary
+     */
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    /**
+     * Returns the URL the attachment can be downloaded from.
+     *
+     * @return the url
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override

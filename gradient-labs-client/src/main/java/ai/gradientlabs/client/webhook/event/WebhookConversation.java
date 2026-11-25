@@ -18,6 +18,9 @@ public class WebhookConversation {
     @JsonProperty("metadata")
     private Map<String, Object> metadata;
 
+    @JsonProperty("customer_source")
+    private String customerSource;
+
     /**
      * Default constructor for Jackson.
      */
@@ -49,6 +52,15 @@ public class WebhookConversation {
      */
     public Map<String, Object> getMetadata() {
         return metadata;
+    }
+
+    /**
+     * Returns the support platform the customer came from, such as {@code intercom}.
+     *
+     * @return the customer source
+     */
+    public String getCustomerSource() {
+        return customerSource;
     }
 
     @Override

@@ -17,7 +17,11 @@ public class UpsertHandOffTargetRequest {
     @JsonProperty("name")
     private final String name;
 
+    @JsonProperty("ref")
+    private final String ref;
+
     private UpsertHandOffTargetRequest(Builder builder) {
+        this.ref = builder.ref;
         this.id = builder.id;
         this.name = builder.name;
     }
@@ -34,7 +38,17 @@ public class UpsertHandOffTargetRequest {
         return name;
     }
 
+    /**
+     * Returns the reference used to point to this target from procedures.
+     *
+     * @return the ref
+     */
+    public String getRef() {
+        return ref;
+    }
+
     public static class Builder {
+        private String ref;
         private String id;
         private String name;
 
@@ -63,6 +77,17 @@ public class UpsertHandOffTargetRequest {
          */
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        /**
+         * Sets the reference used to point to this target from procedures.
+         *
+         * @param ref the ref
+         * @return this builder
+         */
+        public Builder ref(String ref) {
+            this.ref = ref;
             return this;
         }
 

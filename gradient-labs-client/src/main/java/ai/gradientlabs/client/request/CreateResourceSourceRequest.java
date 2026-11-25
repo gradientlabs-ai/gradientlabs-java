@@ -34,7 +34,15 @@ public class CreateResourceSourceRequest {
     @JsonProperty("attribute_descriptions")
     private final Map<String, String> attributeDescriptions;
 
+    @JsonProperty("branch_id")
+    private final String branchId;
+
+    @JsonProperty("branch_name")
+    private final String branchName;
+
     private CreateResourceSourceRequest(Builder builder) {
+        this.branchId = builder.branchId;
+        this.branchName = builder.branchName;
         this.displayName = builder.displayName;
         this.sourceType = builder.sourceType;
         this.description = builder.description;
@@ -71,7 +79,27 @@ public class CreateResourceSourceRequest {
         return attributeDescriptions;
     }
 
+    /**
+     * Returns the ID of the branch to create the resource source on.
+     *
+     * @return the branch id
+     */
+    public String getBranchId() {
+        return branchId;
+    }
+
+    /**
+     * Returns the git name of the branch to create the resource source on.
+     *
+     * @return the branch name
+     */
+    public String getBranchName() {
+        return branchName;
+    }
+
     public static class Builder {
+        private String branchId;
+        private String branchName;
         private String displayName;
         private SourceType sourceType;
         private String description;
@@ -145,6 +173,28 @@ public class CreateResourceSourceRequest {
          */
         public Builder attributeDescriptions(Map<String, String> attributeDescriptions) {
             this.attributeDescriptions = attributeDescriptions;
+            return this;
+        }
+
+        /**
+         * Sets the ID of the branch to create the resource source on.
+         *
+         * @param branchId the branch id
+         * @return this builder
+         */
+        public Builder branchId(String branchId) {
+            this.branchId = branchId;
+            return this;
+        }
+
+        /**
+         * Sets the git name of the branch to create the resource source on.
+         *
+         * @param branchName the branch name
+         * @return this builder
+         */
+        public Builder branchName(String branchName) {
+            this.branchName = branchName;
             return this;
         }
 

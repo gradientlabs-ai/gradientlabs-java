@@ -33,9 +33,6 @@ public class StartConversationRequest {
     @JsonProperty("channel")
     private final Channel channel;
 
-    @JsonProperty("metadata")
-    private final Map<String, Object> metadata;
-
     @JsonProperty("created")
     private final Instant created;
 
@@ -57,7 +54,6 @@ public class StartConversationRequest {
         this.assigneeId = builder.assigneeId;
         this.assigneeType = builder.assigneeType;
         this.channel = builder.channel;
-        this.metadata = builder.metadata;
         this.created = builder.created;
         this.resources = builder.resources;
         this.conversationToken = builder.conversationToken;
@@ -87,10 +83,6 @@ public class StartConversationRequest {
 
     public Channel getChannel() {
         return channel;
-    }
-
-    public Map<String, Object> getMetadata() {
-        return metadata;
     }
 
     public Instant getCreated() {
@@ -129,7 +121,6 @@ public class StartConversationRequest {
         private String assigneeId;
         private ParticipantType assigneeType;
         private Channel channel;
-        private Map<String, Object> metadata;
         private Instant created;
         private Map<String, Object> resources;
         private String conversationToken;
@@ -201,34 +192,6 @@ public class StartConversationRequest {
          */
         public Builder channel(Channel channel) {
             this.channel = channel;
-            return this;
-        }
-
-        /**
-         * Sets arbitrary metadata (optional).
-         * <p>
-         * This will be passed along with webhooks and can be used as action parameters.
-         *
-         * @param metadata the metadata
-         * @return this builder
-         */
-        public Builder metadata(Map<String, Object> metadata) {
-            this.metadata = metadata;
-            return this;
-        }
-
-        /**
-         * Adds a single metadata entry.
-         *
-         * @param key   the metadata key
-         * @param value the metadata value
-         * @return this builder
-         */
-        public Builder addMetadata(String key, Object value) {
-            if (this.metadata == null) {
-                this.metadata = new HashMap<>();
-            }
-            this.metadata.put(key, value);
             return this;
         }
 

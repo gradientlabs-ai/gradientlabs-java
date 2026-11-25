@@ -7,9 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Parameters for adding a message to a conversation.
@@ -32,19 +30,23 @@ public class AddMessageRequest {
     @JsonProperty("created")
     private final Instant created;
 
-    @JsonProperty("metadata")
-    private final Map<String, Object> metadata;
-
     @JsonProperty("attachments")
     private final List<Attachment> attachments;
 
+    @JsonProperty("conversation_token")
+    private final String conversationToken;
+
+    @JsonProperty("subject")
+    private final String subject;
+
     private AddMessageRequest(Builder builder) {
+        this.conversationToken = builder.conversationToken;
+        this.subject = builder.subject;
         this.id = builder.id;
         this.body = builder.body;
         this.participantId = builder.participantId;
         this.participantType = builder.participantType;
         this.created = builder.created;
-        this.metadata = builder.metadata;
         this.attachments = builder.attachments;
     }
 
@@ -52,13 +54,32 @@ public class AddMessageRequest {
         return new Builder();
     }
 
+    /**
+     * Returns the conversation token, if your support platform uses one.
+     *
+     * @return the conversation token
+     */
+    public String getConversationToken() {
+        return conversationToken;
+    }
+
+    /**
+     * Returns the message subject, for emails.
+     *
+     * @return the subject
+     */
+    public String getSubject() {
+        return subject;
+    }
+
     public static class Builder {
+        private String conversationToken;
+        private String subject;
         private String id;
         private String body;
         private String participantId;
         private ParticipantType participantType;
         private Instant created;
-        private Map<String, Object> metadata;
         private List<Attachment> attachments;
 
         private Builder() {
@@ -89,19 +110,6 @@ public class AddMessageRequest {
             return this;
         }
 
-        public Builder metadata(Map<String, Object> metadata) {
-            this.metadata = metadata;
-            return this;
-        }
-
-        public Builder addMetadata(String key, Object value) {
-            if (this.metadata == null) {
-                this.metadata = new HashMap<>();
-            }
-            this.metadata.put(key, value);
-            return this;
-        }
-
         public Builder attachments(List<Attachment> attachments) {
             this.attachments = attachments;
             return this;
@@ -115,14 +123,34 @@ public class AddMessageRequest {
             return this;
         }
 
+        /**
+         * Sets the conversation token, if your support platform uses one.
+         *
+         * @param conversationToken the conversation token
+         * @return this builder
+         */
+        public Builder conversationToken(String conversationToken) {
+            this.conversationToken = conversationToken;
+            return this;
+        }
+
+        /**
+         * Sets the message subject, for emails.
+         *
+         * @param subject the subject
+         * @return this builder
+         */
+        public Builder subject(String subject) {
+            this.subject = subject;
+            return this;
+        }
+
         public AddMessageRequest build() {
             if (id == null || id.isBlank()) {
                 throw new IllegalStateException("id is required");
             }
-            if (body == null || body.isBlank()) {
-                throw new IllegalStateException("body is required");
-            }
-            if (participantId == null || participantId.isBlank()) {
+            if ((participantType != ParticipantType.AI_AGENT || (body != null && !body.isEmpty()))
+                    && (participantId == null || participantId.isBlank())) {
                 throw new IllegalStateException("participantId is required");
             }
             if (participantType == null) {

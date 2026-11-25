@@ -9,37 +9,37 @@ import java.time.Instant;
  */
 public class Topic {
 
-    @JsonProperty("source")
+    @JsonProperty("Source")
     private String source;
 
-    @JsonProperty("external_id")
+    @JsonProperty("ExternalID")
     private String externalId;
 
-    @JsonProperty("name")
+    @JsonProperty("Name")
     private String name;
 
-    @JsonProperty("description")
+    @JsonProperty("Description")
     private String description;
 
-    @JsonProperty("visibility")
+    @JsonProperty("Visibility")
     private Visibility visibility;
 
-    @JsonProperty("parent_external_id")
+    @JsonProperty("ParentExternalID")
     private String parentExternalId;
 
-    @JsonProperty("created")
+    @JsonProperty("Created")
     private Instant created;
 
-    @JsonProperty("last_edited")
+    @JsonProperty("LastEdited")
     private Instant lastEdited;
 
-    @JsonProperty("last_seen")
+    @JsonProperty("LastSeen")
     private Instant lastSeen;
 
-    @JsonProperty("data")
-    private Object data;
+    @JsonProperty("Data")
+    private byte[] data;
 
-    @JsonProperty("public_url")
+    @JsonProperty("PublicURL")
     private String publicUrl;
 
     /**
@@ -130,11 +130,11 @@ public class Topic {
     }
 
     /**
-     * Returns a raw representation of the topic from the support platform.
+     * Returns the topic as the support platform represents it (decoded from base64).
      *
-     * @return the data object
+     * @return the raw topic bytes
      */
-    public Object getData() {
+    public byte[] getData() {
         return data;
     }
 

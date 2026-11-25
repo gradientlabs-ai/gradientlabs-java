@@ -55,10 +55,6 @@ public class WebhookHandlerExample extends HttpServlet {
                     handleActionExecute(webhook.asActionExecute());
                     break;
 
-                case RESOURCE_PULL:
-                    handleResourcePull(webhook.asResourcePull());
-                    break;
-
                 default:
                     System.out.println("Unknown webhook type: " + webhook.getType());
             }
@@ -146,23 +142,9 @@ public class WebhookHandlerExample extends HttpServlet {
         //     AddMessageRequest.builder()
         //         .id("action-result-" + System.currentTimeMillis())
         //         .body("Action result: " + result)
-        //         .participantType(ParticipantType.HUMAN)
+        //         .participantType(ParticipantType.AGENT)
         //         .build()
         // );
     }
 
-    private void handleResourcePull(ResourcePullEvent event) {
-        System.out.println("\n=== Resource Pull ===");
-        System.out.println("Conversation: " + event.getConversation().getId());
-        System.out.println("Resource Type: " + event.getResourceType());
-
-        // TODO: Fetch the requested resource and add it to the conversation
-        // Object resource = fetchResource(event.getResourceType());
-        //
-        // client.addConversationResource(
-        //     event.getConversation().getId(),
-        //     event.getResourceType(),
-        //     resource
-        // );
-    }
 }

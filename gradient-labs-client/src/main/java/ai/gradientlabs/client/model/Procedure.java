@@ -23,9 +23,6 @@ public class Procedure {
     @JsonProperty("status")
     private ProcedureStatus status;
 
-    @JsonProperty("author")
-    private UserDetails author;
-
     @JsonProperty("created")
     private Instant created;
 
@@ -108,24 +105,6 @@ public class Procedure {
      */
     public void setStatus(ProcedureStatus status) {
         this.status = status;
-    }
-
-    /**
-     * Gets the user who originally created the procedure.
-     *
-     * @return the author details
-     */
-    public UserDetails getAuthor() {
-        return author;
-    }
-
-    /**
-     * Sets the procedure author.
-     *
-     * @param author the author details
-     */
-    public void setAuthor(UserDetails author) {
-        this.author = author;
     }
 
     /**
@@ -212,7 +191,6 @@ public class Procedure {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
-                ", author=" + author +
                 ", created=" + created +
                 ", updated=" + updated +
                 ", isDailyLimited=" + isDailyLimited +

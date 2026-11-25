@@ -3,10 +3,11 @@ package ai.gradientlabs.client.webhook.event;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Event data for a {@code resource.pull} webhook.
+ * Legacy resource event. Resource fetches use {@link ActionExecuteEvent}.
  * <p>
  * Indicates the agent wants to pull a resource.
  */
+@Deprecated
 public class ResourcePullEvent {
 
     @JsonProperty("resource_type")
@@ -14,6 +15,9 @@ public class ResourcePullEvent {
 
     @JsonProperty("conversation")
     private WebhookConversation conversation;
+
+    @JsonProperty("back_office_task")
+    private WebhookBackOfficeTask backOfficeTask;
 
     /**
      * Default constructor for Jackson.
@@ -37,6 +41,15 @@ public class ResourcePullEvent {
      */
     public WebhookConversation getConversation() {
         return conversation;
+    }
+
+    /**
+     * Returns the back-office task the resource is read for. Null when it is read for a conversation.
+     *
+     * @return the back office task
+     */
+    public WebhookBackOfficeTask getBackOfficeTask() {
+        return backOfficeTask;
     }
 
     @Override

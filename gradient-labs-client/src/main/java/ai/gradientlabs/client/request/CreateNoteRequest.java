@@ -3,6 +3,8 @@ package ai.gradientlabs.client.request;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+import java.util.List;
 import java.time.Instant;
 
 /**
@@ -29,7 +31,15 @@ public class CreateNoteRequest {
     @JsonProperty("end_time")
     private final Instant endTime;
 
+    @JsonProperty("attributes")
+    private final Map<String, List<String>> attributes;
+
+    @JsonProperty("knowledge_base_ids")
+    private final List<String> knowledgeBaseIds;
+
     private CreateNoteRequest(Builder builder) {
+        this.attributes = builder.attributes;
+        this.knowledgeBaseIds = builder.knowledgeBaseIds;
         this.id = builder.id;
         this.title = builder.title;
         this.body = builder.body;
@@ -66,7 +76,27 @@ public class CreateNoteRequest {
         return endTime;
     }
 
+    /**
+     * Returns the note's attributes, by attribute name.
+     *
+     * @return the attributes
+     */
+    public Map<String, List<String>> getAttributes() {
+        return attributes;
+    }
+
+    /**
+     * Returns your IDs of the knowledge bases the note belongs to.
+     *
+     * @return the knowledge base ids
+     */
+    public List<String> getKnowledgeBaseIds() {
+        return knowledgeBaseIds;
+    }
+
     public static class Builder {
+        private Map<String, List<String>> attributes;
+        private List<String> knowledgeBaseIds;
         private String id;
         private String title;
         private String body;
@@ -146,6 +176,28 @@ public class CreateNoteRequest {
          */
         public Builder endTime(Instant endTime) {
             this.endTime = endTime;
+            return this;
+        }
+
+        /**
+         * Sets the note's attributes, by attribute name.
+         *
+         * @param attributes the attributes
+         * @return this builder
+         */
+        public Builder attributes(Map<String, List<String>> attributes) {
+            this.attributes = attributes;
+            return this;
+        }
+
+        /**
+         * Sets your IDs of the knowledge bases the note belongs to.
+         *
+         * @param knowledgeBaseIds the knowledge base ids
+         * @return this builder
+         */
+        public Builder knowledgeBaseIds(List<String> knowledgeBaseIds) {
+            this.knowledgeBaseIds = knowledgeBaseIds;
             return this;
         }
 

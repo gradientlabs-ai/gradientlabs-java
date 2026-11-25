@@ -3,28 +3,18 @@ package ai.gradientlabs.client.model;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * The type of attachment.
+ * The type of a message attachment.
  */
 public enum AttachmentType {
     /**
-     * Image attachment.
+     * An image.
      */
     IMAGE("image"),
 
     /**
-     * Document attachment.
+     * Any other kind of file.
      */
-    DOCUMENT("document"),
-
-    /**
-     * Video attachment.
-     */
-    VIDEO("video"),
-
-    /**
-     * Audio attachment.
-     */
-    AUDIO("audio");
+    FILE("file");
 
     private final String value;
 

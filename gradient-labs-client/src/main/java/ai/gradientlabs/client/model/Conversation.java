@@ -19,9 +19,6 @@ public class Conversation {
     @JsonProperty("channel")
     private Channel channel;
 
-    @JsonProperty("metadata")
-    private Map<String, Object> metadata;
-
     @JsonProperty("created")
     private Instant created;
 
@@ -36,6 +33,12 @@ public class Conversation {
 
     @JsonProperty("latest_agent_metadata")
     private AgentMetadata agentMetadata;
+
+    @JsonProperty("latest_handoff_target")
+    private String latestHandoffTarget;
+
+    @JsonProperty("latest_intent")
+    private String latestIntent;
 
     /**
      * Default constructor for Jackson.
@@ -75,17 +78,6 @@ public class Conversation {
      */
     public Channel getChannel() {
         return channel;
-    }
-
-    /**
-     * Returns arbitrary metadata attached to the conversation.
-     * <p>
-     * This metadata will be passed along with webhooks and can be used as action parameters.
-     *
-     * @return the metadata, or null if none
-     */
-    public Map<String, Object> getMetadata() {
-        return metadata;
     }
 
     /**
@@ -131,6 +123,24 @@ public class Conversation {
      */
     public AgentMetadata getAgentMetadata() {
         return agentMetadata;
+    }
+
+    /**
+     * Returns the hand-off target the conversation was last handed off to.
+     *
+     * @return the latest handoff target
+     */
+    public String getLatestHandoffTarget() {
+        return latestHandoffTarget;
+    }
+
+    /**
+     * Returns the intent most recently detected in the conversation.
+     *
+     * @return the latest intent
+     */
+    public String getLatestIntent() {
+        return latestIntent;
     }
 
     @Override

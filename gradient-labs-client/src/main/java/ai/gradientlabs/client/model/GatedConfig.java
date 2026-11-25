@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class GatedConfig {
 
-    @JsonProperty("max_daily_conversations")
+    @JsonProperty("MaxDailyConversations")
     private int maxDailyConversations;
 
     /**

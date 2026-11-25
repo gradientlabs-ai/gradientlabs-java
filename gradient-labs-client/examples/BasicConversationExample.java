@@ -24,8 +24,6 @@ public class BasicConversationExample {
                     .id("conversation-" + System.currentTimeMillis())
                     .customerId("user-1234")
                     .channel(Channel.CHAT)
-                    .addMetadata("source", "web")
-                    .addMetadata("entrypoint", "home-page")
                     .addResource("user_profile", Map.of(
                             "name", "Jane Doe",
                             "email", "jane@example.com",
@@ -51,8 +49,6 @@ public class BasicConversationExample {
                     .participantId("user-1234")
                     .participantType(ParticipantType.CUSTOMER)
                     .created(Instant.now())
-                    .addMetadata("device_os", "iOS 17")
-                    .addMetadata("app_version", "2.1.0")
                     .addAttachment(new Attachment(
                             AttachmentType.IMAGE,
                             "order-receipt.jpg",
@@ -78,7 +74,7 @@ public class BasicConversationExample {
             EventRequest eventRequest = EventRequest.builder()
                     .type("internal_note")
                     .participantId("system")
-                    .participantType(ParticipantType.HUMAN)
+                    .participantType(ParticipantType.AGENT)
                     .body("Customer has premium subscription - prioritize response")
                     .build();
 
@@ -91,12 +87,7 @@ public class BasicConversationExample {
 
             // Read the conversation
             System.out.println("\nReading conversation...");
-            Conversation updatedConv = client.readConversation(
-                    conversation.getId(),
-                    ReadConversationRequest.builder()
-                            .includeMessages(true)
-                            .build()
-            );
+            Conversation updatedConv = client.readConversation(conversation.getId());
             System.out.println("✓ Conversation read");
             System.out.println("  Status: " + updatedConv.getStatus());
             System.out.println("  Agent active: " + updatedConv.isAgentActive());

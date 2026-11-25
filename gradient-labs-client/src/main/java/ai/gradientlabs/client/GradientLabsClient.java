@@ -11,7 +11,9 @@ import ai.gradientlabs.client.webhook.WebhookVerifier;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.http.HttpClient;
 import java.time.Duration;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Main client for interacting with the Gradient Labs API.
@@ -44,7 +46,7 @@ public class GradientLabsClient {
                                WebhookVerifier webhookVerifier) {
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;
-        this.httpClient = new HttpClientWrapper(httpClient, apiKey, getUserAgent());
+        this.httpClient = new HttpClientWrapper(httpClient, baseUrl, apiKey, getUserAgent());
         this.webhookVerifier = webhookVerifier;
         this.userAgent = getUserAgent();
     }
@@ -149,13 +151,42 @@ public class GradientLabsClient {
      * Retrieves a conversation by ID.
      *
      * @param conversationId the conversation ID
-     * @param request        optional read parameters
+     * @param request        optional read parameters, or null
      * @return the conversation
      * @throws GradientLabsException if the request fails
      */
     public Conversation readConversation(String conversationId, ReadConversationRequest request) {
-        String path = String.format("/conversations/%s", conversationId);
-        return httpClient.get(path, request, Conversation.class);
+        String path = String.format("/conversations/%s/read", seg(conversationId));
+        Map<String, Object> query = new LinkedHashMap<>();
+        if (request != null) {
+            query.put("support_platform", request.getSupportPlatform());
+        }
+        return httpClient.get(path, query, Conversation.class);
+    }
+
+    /**
+     * Retrieves a conversation by ID.
+     *
+     * @param conversationId the conversation ID
+     * @return the conversation
+     * @throws GradientLabsException if the request fails
+     */
+    public Conversation readConversation(String conversationId) {
+        return readConversation(conversationId, null);
+    }
+
+    /**
+     * Retrieves a conversation by ID using the older {@code GET /conversations/{id}} endpoint.
+     *
+     * @param conversationId the conversation ID
+     * @return the conversation
+     * @throws GradientLabsException if the request fails
+     * @deprecated use {@link #readConversation(String)}
+     */
+    @Deprecated
+    public Conversation readConversationDeprecated(String conversationId) {
+        String path = String.format("/conversations/%s", seg(conversationId));
+        return httpClient.get(path, null, Conversation.class);
     }
 
     /**
@@ -167,7 +198,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public Message addMessage(String conversationId, AddMessageRequest request) {
-        String path = String.format("/conversations/%s/messages", conversationId);
+        String path = String.format("/conversations/%s/messages", seg(conversationId));
         return httpClient.post(path, request, Message.class);
     }
 
@@ -179,7 +210,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void assignConversation(String conversationId, AssignmentRequest request) {
-        String path = String.format("/conversations/%s/assignee", conversationId);
+        String path = String.format("/conversations/%s/assignee", seg(conversationId));
         httpClient.put(path, request, Void.class);
     }
 
@@ -191,7 +222,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void addConversationEvent(String conversationId, EventRequest request) {
-        String path = String.format("/conversations/%s/events", conversationId);
+        String path = String.format("/conversations/%s/events", seg(conversationId));
         httpClient.post(path, request, Void.class);
     }
 
@@ -203,7 +234,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void finishConversation(String conversationId, FinishConversationRequest request) {
-        String path = String.format("/conversations/%s/finish", conversationId);
+        String path = String.format("/conversations/%s/finish", seg(conversationId));
         httpClient.put(path, request, Void.class);
     }
 
@@ -215,7 +246,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void cancelConversation(String conversationId, CancelConversationRequest request) {
-        String path = String.format("/conversations/%s/cancel", conversationId);
+        String path = String.format("/conversations/%s/cancel", seg(conversationId));
         httpClient.put(path, request, Void.class);
     }
 
@@ -227,7 +258,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void resumeConversation(String conversationId, ResumeConversationRequest request) {
-        String path = String.format("/conversations/%s/resume", conversationId);
+        String path = String.format("/conversations/%s/resume", seg(conversationId));
         httpClient.put(path, request, Void.class);
     }
 
@@ -239,7 +270,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void rateConversation(String conversationId, RateConversationRequest request) {
-        String path = String.format("/conversations/%s/rate", conversationId);
+        String path = String.format("/conversations/%s/rate", seg(conversationId));
         httpClient.put(path, request, Void.class);
     }
 
@@ -268,7 +299,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void returnAsyncToolResult(String conversationId, ReturnAsyncToolResultRequest request) {
-        String path = String.format("/conversations/%s/return-async-tool-result", conversationId);
+        String path = String.format("/conversations/%s/return-async-tool-result", seg(conversationId));
         httpClient.put(path, request, Void.class);
     }
 
@@ -284,8 +315,66 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void deleteConversation(String conversationId) {
-        String path = String.format("/conversations/%s", conversationId);
+        String path = String.format("/conversations/%s", seg(conversationId));
         httpClient.delete(path, Void.class);
+    }
+
+    // ==================== Customer Memory Operations ====================
+
+    /**
+     * Experimental. Available to selected workspaces.
+     * <p>
+     * Lists the memories stored for a customer.
+     *
+     * @param customerId your identifier for the customer
+     * @return the customer's memories
+     * @throws GradientLabsException if the request fails
+     */
+    public List<CustomerMemory> listCustomerMemories(String customerId) {
+        String path = String.format("/customers/%s/memories", seg(customerId));
+        CustomerMemoriesListResponse response = httpClient.get(path, null, CustomerMemoriesListResponse.class);
+        return response.getMemories();
+    }
+
+    /**
+     * Experimental. Available to selected workspaces.
+     * <p>
+     * Batch-creates a set of memories scoped to a customer.
+     * <p>
+     * Each memory's {@code data} payload is stored verbatim as arbitrary JSON for
+     * the AI agent to search over on demand. The batch is created asynchronously:
+     * the call returns as soon as the job is accepted and yields no result. A
+     * {@link GradientLabsException} carrying HTTP 409 is thrown when a batch is
+     * already being created for the same customer.
+     *
+     * @param customerId the customer ID
+     * @param request    the memories to create
+     * @throws GradientLabsException if the request fails
+     * @deprecated use {@link #batchCreateCustomerMemoriesV2(String, BatchCreateCustomerMemoriesV2Request)},
+     * which also takes a category description
+     */
+    @Deprecated
+    public void batchCreateCustomerMemories(String customerId, BatchCreateCustomerMemoriesRequest request) {
+        String path = String.format("/customers/%s/memories", seg(customerId));
+        httpClient.post(path, request, Void.class);
+    }
+
+    /**
+     * Experimental. Available to selected workspaces.
+     * <p>
+     * Batch-creates a set of memories scoped to a customer, each with a category name and description.
+     * <p>
+     * The batch is created asynchronously: the call returns as soon as the job is accepted. A
+     * {@link GradientLabsException} carrying HTTP 409 is thrown when a batch is already being
+     * created for the same customer.
+     *
+     * @param customerId your identifier for the customer
+     * @param request    the memories to create
+     * @throws GradientLabsException if the request fails
+     */
+    public void batchCreateCustomerMemoriesV2(String customerId, BatchCreateCustomerMemoriesV2Request request) {
+        String path = String.format("/customers/%s/memories/v2", seg(customerId));
+        httpClient.post(path, request, Void.class);
     }
 
     // ==================== Tool Operations ====================
@@ -297,7 +386,8 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public List<Tool> listTools() {
-        return httpClient.getList("/tools", null, Tool.class);
+        ToolsListResponse response = httpClient.get("/tools", null, ToolsListResponse.class);
+        return response.getTools();
     }
 
     /**
@@ -319,8 +409,22 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public Tool readTool(String toolId) {
-        String path = String.format("/tools/%s", toolId);
-        return httpClient.get(path, null, Tool.class);
+        return readTool(toolId, null);
+    }
+
+    /**
+     * Retrieves a given version of a tool.
+     *
+     * @param toolId  the tool ID
+     * @param version the version to read, or null for the latest
+     * @return the tool
+     * @throws GradientLabsException if the request fails
+     */
+    public Tool readTool(String toolId, Long version) {
+        String path = String.format("/tools/%s", seg(toolId));
+        Map<String, Object> query = new LinkedHashMap<>();
+        query.put("version", version);
+        return httpClient.get(path, query, Tool.class);
     }
 
     /**
@@ -332,7 +436,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public Tool updateTool(String toolId, UpdateToolRequest request) {
-        String path = String.format("/tools/%s", toolId);
+        String path = String.format("/tools/%s", seg(toolId));
         return httpClient.put(path, request, Tool.class);
     }
 
@@ -343,7 +447,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void deleteTool(String toolId) {
-        String path = String.format("/tools/%s", toolId);
+        String path = String.format("/tools/%s", seg(toolId));
         httpClient.delete(path, Void.class);
     }
 
@@ -358,11 +462,52 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public ToolExecuteResult executeTool(String toolId, ToolExecuteRequest request) {
-        String path = String.format("/tools/%s/execute", toolId);
+        String path = String.format("/tools/%s/execute", seg(toolId));
         return httpClient.post(path, request, ToolExecuteResult.class);
     }
 
     // ==================== Note Operations ====================
+
+    /**
+     * Lists the first page of notes.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @return the first page of notes
+     * @throws GradientLabsException if the request fails
+     */
+    public NoteListResponse listNotes() {
+        return listNotes(null);
+    }
+
+    /**
+     * Lists a page of notes.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param cursor the cursor from a previous page's pagination, or null for the first page
+     * @return the page of notes
+     * @throws GradientLabsException if the request fails
+     */
+    public NoteListResponse listNotes(String cursor) {
+        Map<String, Object> query = new LinkedHashMap<>();
+        query.put("cursor", cursor);
+        return httpClient.get("/notes", query, NoteListResponse.class);
+    }
+
+    /**
+     * Reads a note.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param noteId your identifier for the note
+     * @return the note
+     * @throws GradientLabsException if the request fails
+     */
+    public Note readNote(String noteId) {
+        String path = String.format("/notes/%s", seg(noteId));
+        return httpClient.get(path, null, Note.class);
+    }
 
     /**
      * Creates a new note.
@@ -384,7 +529,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public Note updateNote(String noteId, UpdateNoteRequest request) {
-        String path = String.format("/notes/%s", noteId);
+        String path = String.format("/notes/%s", seg(noteId));
         return httpClient.post(path, request, Note.class);
     }
 
@@ -395,7 +540,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void deleteNote(String noteId) {
-        String path = String.format("/notes/%s", noteId);
+        String path = String.format("/notes/%s", seg(noteId));
         httpClient.delete(path, Void.class);
     }
 
@@ -407,7 +552,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void setNoteStatus(String noteId, SetNoteStatusRequest request) {
-        String path = String.format("/notes/%s/status", noteId);
+        String path = String.format("/notes/%s/status", seg(noteId));
         httpClient.post(path, request, Void.class);
     }
 
@@ -427,7 +572,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public Secret writeSecret(WriteSecretRequest request) {
-        String path = String.format("/secrets/%s", request.getName());
+        String path = String.format("/secrets/%s", seg(request.getName()));
         return httpClient.put(path, request, Secret.class);
     }
 
@@ -458,7 +603,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void revokeSecret(RevokeSecretRequest request) {
-        String path = String.format("/secrets/%s", request.getName());
+        String path = String.format("/secrets/%s", seg(request.getName()));
         httpClient.delete(path, Void.class);
     }
 
@@ -505,7 +650,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public ResourceSource readResourceSource(ReadResourceSourceRequest request) {
-        String path = String.format("/resource-sources/%s", request.getId());
+        String path = String.format("/resource-sources/%s", seg(request.getId()));
         return httpClient.get(path, null, ResourceSource.class);
     }
 
@@ -522,7 +667,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public ResourceSource updateResourceSource(UpdateResourceSourceRequest request) {
-        String path = String.format("/resource-sources/%s", request.getId());
+        String path = String.format("/resource-sources/%s", seg(request.getId()));
         return httpClient.put(path, request, ResourceSource.class);
     }
 
@@ -540,7 +685,12 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public ResourceSource updateResourceSourceSchemaByExamples(UpdateResourceSourceSchemaByExamplesRequest request) {
-        String path = String.format("/resource-sources/%s/schema-by-examples", request.getId());
+        return updateResourceSourceSchemaByExamples(request.getId(), request);
+    }
+
+    /** Updates a resource source schema from example payloads. */
+    public ResourceSource updateResourceSourceSchemaByExamples(String id, UpdateResourceSourceSchemaByExamplesRequest request) {
+        String path = String.format("/resource-sources/%s/schema-by-examples", seg(id));
         return httpClient.post(path, request, ResourceSource.class);
     }
 
@@ -555,7 +705,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void deleteResourceSource(DeleteResourceSourceRequest request) {
-        String path = String.format("/resource-sources/%s", request.getId());
+        String path = String.format("/resource-sources/%s", seg(request.getId()));
         httpClient.delete(path, Void.class);
     }
 
@@ -603,7 +753,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public ResourceType readResourceType(ReadResourceTypeRequest request) {
-        String path = String.format("/resource-types/%s", request.getId());
+        String path = String.format("/resource-types/%s", seg(request.getId()));
         return httpClient.get(path, null, ResourceType.class);
     }
 
@@ -620,7 +770,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public ResourceType updateResourceType(UpdateResourceTypeRequest request) {
-        String path = String.format("/resource-types/%s", request.getId());
+        String path = String.format("/resource-types/%s", seg(request.getId()));
         return httpClient.put(path, request, ResourceType.class);
     }
 
@@ -635,7 +785,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void deleteResourceType(DeleteResourceTypeRequest request) {
-        String path = String.format("/resource-types/%s", request.getId());
+        String path = String.format("/resource-types/%s", seg(request.getId()));
         httpClient.delete(path, Void.class);
     }
 
@@ -683,7 +833,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails (including if the target is in use)
      */
     public void deleteHandOffTarget(DeleteHandOffTargetRequest request) {
-        httpClient.delete("/hand-off-targets", request, Void.class);
+        httpClient.delete("/hand-off-targets", Map.of("id", request.getId()), Void.class);
     }
 
     /**
@@ -715,8 +865,8 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public GetDefaultHandOffTargetResponse getDefaultHandOffTarget(GetDefaultHandOffTargetRequest request) {
-        String path = "/hand-off-targets/default?channel=" + request.getChannel().getValue();
-        return httpClient.get(path, null, GetDefaultHandOffTargetResponse.class);
+        return httpClient.get("/hand-off-targets/default", Map.of("channel", request.getChannel().getValue()),
+                GetDefaultHandOffTargetResponse.class);
     }
 
     // ==================== Article Operations ====================
@@ -767,7 +917,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void setArticleUsageStatus(String articleId, SetArticleUsageStatusRequest request) {
-        String path = String.format("/articles/%s/usage-status", articleId);
+        String path = String.format("/articles/%s/usage-status", seg(articleId));
         httpClient.post(path, request, Void.class);
     }
 
@@ -783,7 +933,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void deleteArticle(String articleId) {
-        String path = String.format("/articles/%s", articleId);
+        String path = String.format("/articles/%s", seg(articleId));
         httpClient.delete(path, Void.class);
     }
 
@@ -799,13 +949,11 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public ListTopicsResponse listTopics(ListTopicsRequest request) {
-        StringBuilder path = new StringBuilder("/topics");
-
-        if (request.getSupportPlatform() != null) {
-            path.append("?support_platform=").append(request.getSupportPlatform());
+        Map<String, Object> query = new LinkedHashMap<>();
+        if (request != null) {
+            query.put("support_platform", request.getSupportPlatform());
         }
-
-        return httpClient.get(path.toString(), null, ListTopicsResponse.class);
+        return httpClient.get("/topics", query, ListTopicsResponse.class);
     }
 
     /**
@@ -819,13 +967,12 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public Topic readTopic(String topicId, ReadTopicRequest request) {
-        StringBuilder path = new StringBuilder(String.format("/topic/%s", topicId));
-
-        if (request.getSupportPlatform() != null) {
-            path.append("?support_platform=").append(request.getSupportPlatform());
+        String path = String.format("/topic/%s", seg(topicId));
+        Map<String, Object> query = new LinkedHashMap<>();
+        if (request != null) {
+            query.put("support_platform", request.getSupportPlatform());
         }
-
-        return httpClient.get(path.toString(), null, Topic.class);
+        return httpClient.get(path, query, Topic.class);
     }
 
     // ==================== Procedure Operations ====================
@@ -840,20 +987,12 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public ProcedureListResponse listProcedures(ListProceduresRequest request) {
-        StringBuilder path = new StringBuilder("/procedures");
-        boolean hasQueryParam = false;
-
-        if (request.getCursor() != null) {
-            path.append("?cursor=").append(request.getCursor());
-            hasQueryParam = true;
+        Map<String, Object> query = new LinkedHashMap<>();
+        if (request != null) {
+            query.put("cursor", request.getCursor());
+            query.put("status", request.getStatus() == null ? null : request.getStatus().getValue());
         }
-
-        if (request.getStatus() != null) {
-            path.append(hasQueryParam ? "&" : "?");
-            path.append("status=").append(request.getStatus().getValue());
-        }
-
-        return httpClient.get(path.toString(), null, ProcedureListResponse.class);
+        return httpClient.get("/procedures", query, ProcedureListResponse.class);
     }
 
     /**
@@ -866,7 +1005,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public Procedure readProcedure(String procedureId) {
-        String path = String.format("/procedure/%s", procedureId);
+        String path = String.format("/procedure/%s", seg(procedureId));
         return httpClient.get(path, null, Procedure.class);
     }
 
@@ -883,8 +1022,8 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public Procedure setProcedureLimit(String procedureId, SetProcedureLimitRequest request) {
-        String path = String.format("/procedure/%s/limit", procedureId);
-        return httpClient.post(path, request, Procedure.class);
+        String path = String.format("/procedure/%s/limit", seg(procedureId));
+        return httpClient.post(path, request, ProcedureLimitResponse.class).procedure();
     }
 
     /**
@@ -897,7 +1036,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public ListProcedureVersionsResponse listProcedureVersions(String procedureId) {
-        String path = String.format("/procedures/%s/versions", procedureId);
+        String path = String.format("/procedures/%s/versions", seg(procedureId));
         return httpClient.get(path, null, ListProcedureVersionsResponse.class);
     }
 
@@ -915,7 +1054,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void setProcedureGatedVersion(String procedureId, int version, SetProcedureGatedVersionRequest request) {
-        String path = String.format("/procedures/%s/versions/%d/set-gated", procedureId, version);
+        String path = String.format("/procedures/%s/versions/%d/set-gated", seg(procedureId), version);
         httpClient.post(path, request, Void.class);
     }
 
@@ -929,7 +1068,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void unsetProcedureGatedVersion(String procedureId, int version) {
-        String path = String.format("/procedures/%s/versions/%d/unset-gated", procedureId, version);
+        String path = String.format("/procedures/%s/versions/%d/unset-gated", seg(procedureId), version);
         httpClient.post(path, null, Void.class);
     }
 
@@ -946,7 +1085,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void setProcedureLiveVersion(String procedureId, int version) {
-        String path = String.format("/procedures/%s/versions/%d/set-live", procedureId, version);
+        String path = String.format("/procedures/%s/versions/%d/set-live", seg(procedureId), version);
         httpClient.post(path, null, Void.class);
     }
 
@@ -960,7 +1099,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void unsetProcedureLiveVersion(String procedureId, int version) {
-        String path = String.format("/procedures/%s/versions/%d/unset-live", procedureId, version);
+        String path = String.format("/procedures/%s/versions/%d/unset-live", seg(procedureId), version);
         httpClient.post(path, null, Void.class);
     }
 
@@ -1002,7 +1141,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public TrafficGroup updateTrafficGroup(UpdateTrafficGroupRequest request) {
-        String path = String.format("/traffic-groups/%s", request.getId());
+        String path = String.format("/traffic-groups/%s", seg(request.getId()));
         return httpClient.put(path, request, TrafficGroup.class);
     }
 
@@ -1015,7 +1154,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void deleteTrafficGroup(String trafficGroupId) {
-        String path = String.format("/traffic-groups/%s", trafficGroupId);
+        String path = String.format("/traffic-groups/%s", seg(trafficGroupId));
         httpClient.delete(path, Void.class);
     }
 
@@ -1029,7 +1168,12 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public TrafficGroupTarget createTrafficGroupTarget(CreateTrafficGroupTargetRequest request) {
-        String path = String.format("/traffic-groups/%s/targets", request.getGroupId());
+        return createTrafficGroupTarget(request.getGroupId(), request);
+    }
+
+    /** Adds a target to a traffic group. */
+    public TrafficGroupTarget createTrafficGroupTarget(String groupId, CreateTrafficGroupTargetRequest request) {
+        String path = String.format("/traffic-groups/%s/targets", seg(groupId));
         return httpClient.post(path, request, TrafficGroupTarget.class);
     }
 
@@ -1043,7 +1187,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void deleteTrafficGroupTarget(String trafficGroupId, String targetId) {
-        String path = String.format("/traffic-groups/%s/targets/%s", trafficGroupId, targetId);
+        String path = String.format("/traffic-groups/%s/targets/%s", seg(trafficGroupId), seg(targetId));
         httpClient.delete(path, Void.class);
     }
 
@@ -1058,7 +1202,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public TrafficGroupTarget createTrafficGroupExclusion(String groupId, CreateTrafficGroupExclusionRequest request) {
-        String path = String.format("/traffic-groups/%s/exclusions", groupId);
+        String path = String.format("/traffic-groups/%s/exclusions", seg(groupId));
         return httpClient.post(path, request, TrafficGroupTarget.class);
     }
 
@@ -1072,7 +1216,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void deleteTrafficGroupExclusion(String groupId, String targetId) {
-        String path = String.format("/traffic-groups/%s/exclusions/%s", groupId, targetId);
+        String path = String.format("/traffic-groups/%s/exclusions/%s", seg(groupId), seg(targetId));
         httpClient.delete(path, Void.class);
     }
 
@@ -1088,6 +1232,121 @@ public class GradientLabsClient {
      */
     public IPAddresses listIpAddresses() {
         return httpClient.get("/ip-addresses", null, IPAddresses.class);
+    }
+
+    // ==================== Knowledge Base Operations ====================
+
+    /**
+     * Lists the knowledge bases created through the API.
+     * <p>
+     * <strong>Note:</strong> Works with an Integration or a Management API key.
+     *
+     * @return the knowledge bases
+     * @throws GradientLabsException if the request fails
+     */
+    public List<KnowledgeBase> listKnowledgeBases() {
+        KnowledgeBasesListResponse response = httpClient.get("/knowledge-bases", null, KnowledgeBasesListResponse.class);
+        return response.getKnowledgeBases();
+    }
+
+    /**
+     * Creates a knowledge base that articles and notes can be attached to.
+     * <p>
+     * <strong>Note:</strong> Works with an Integration or a Management API key.
+     *
+     * @param request the knowledge base parameters
+     * @return the created knowledge base
+     * @throws GradientLabsException if the request fails
+     */
+    public KnowledgeBase createKnowledgeBase(CreateKnowledgeBaseRequest request) {
+        return httpClient.post("/knowledge-bases", request, KnowledgeBase.class);
+    }
+
+    /**
+     * Reads a knowledge base by your identifier for it.
+     * <p>
+     * <strong>Note:</strong> Works with an Integration or a Management API key.
+     *
+     * @param knowledgeBaseId your identifier for the knowledge base
+     * @return the knowledge base
+     * @throws GradientLabsException if the request fails
+     */
+    public KnowledgeBase readKnowledgeBase(String knowledgeBaseId) {
+        String path = String.format("/knowledge-bases/%s", seg(knowledgeBaseId));
+        return httpClient.get(path, null, KnowledgeBase.class);
+    }
+
+    /**
+     * Renames a knowledge base.
+     * <p>
+     * <strong>Note:</strong> Works with an Integration or a Management API key.
+     *
+     * @param knowledgeBaseId your identifier for the knowledge base
+     * @param request         the update parameters
+     * @return the updated knowledge base
+     * @throws GradientLabsException if the request fails
+     */
+    public KnowledgeBase updateKnowledgeBase(String knowledgeBaseId, UpdateKnowledgeBaseRequest request) {
+        String path = String.format("/knowledge-bases/%s", seg(knowledgeBaseId));
+        return httpClient.post(path, request, KnowledgeBase.class);
+    }
+
+    // ==================== File Operations ====================
+
+    /**
+     * Starts uploading a file to the workspace.
+     * <p>
+     * PUT the file to the returned {@link FileUpload#getUploadUrl()} with its headers, then call
+     * {@link #createFile(CreateFileRequest)} with the upload ID.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the upload parameters
+     * @return where and how to upload the file
+     * @throws GradientLabsException if the request fails
+     */
+    public FileUpload beginFileUpload(BeginFileUploadRequest request) {
+        return httpClient.post("/file-uploads", request, FileUpload.class);
+    }
+
+    /**
+     * Turns a finished upload into a workspace file.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param request the file parameters
+     * @return the created file
+     * @throws GradientLabsException if the request fails
+     */
+    public WorkspaceFile createFile(CreateFileRequest request) {
+        return httpClient.post("/files", request, WorkspaceFile.class);
+    }
+
+    /**
+     * Lists the first page of workspace files.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @return the first page of files
+     * @throws GradientLabsException if the request fails
+     */
+    public FileListResponse listFiles() {
+        return listFiles(null);
+    }
+
+    /**
+     * Lists a page of workspace files.
+     * <p>
+     * <strong>Note:</strong> Requires a Management API key.
+     *
+     * @param cursor the cursor from a previous page's pagination, or null for the first page
+     * @return the page of files
+     * @throws GradientLabsException if the request fails
+     */
+    public FileListResponse listFiles(String cursor) {
+        Map<String, Object> query = new LinkedHashMap<>();
+        query.put("cursor", cursor);
+        return httpClient.get("/files", query, FileListResponse.class);
     }
 
     // ==================== Terminology Substitution Operations ====================
@@ -1114,7 +1373,9 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public List<TerminologySubstitution> listTerminologySubstitutions() {
-        return httpClient.getList("/terminology-substitutions", null, TerminologySubstitution.class);
+        TerminologySubstitutionsListResponse response = httpClient.get("/terminology-substitutions", null,
+                TerminologySubstitutionsListResponse.class);
+        return response.getSubstitutions();
     }
 
     /**
@@ -1127,7 +1388,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public TerminologySubstitution readTerminologySubstitution(String substitutionId) {
-        String path = String.format("/terminology-substitutions/%s", substitutionId);
+        String path = String.format("/terminology-substitutions/%s", seg(substitutionId));
         return httpClient.get(path, null, TerminologySubstitution.class);
     }
 
@@ -1142,7 +1403,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public TerminologySubstitution updateTerminologySubstitution(String substitutionId, UpdateTerminologySubstitutionRequest request) {
-        String path = String.format("/terminology-substitutions/%s", substitutionId);
+        String path = String.format("/terminology-substitutions/%s", seg(substitutionId));
         return httpClient.put(path, request, TerminologySubstitution.class);
     }
 
@@ -1155,7 +1416,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void deleteTerminologySubstitution(String substitutionId) {
-        String path = String.format("/terminology-substitutions/%s", substitutionId);
+        String path = String.format("/terminology-substitutions/%s", seg(substitutionId));
         httpClient.delete(path, Void.class);
     }
 
@@ -1180,7 +1441,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public BackOfficeTask readBackOfficeTask(String taskId) {
-        String path = String.format("/back-office-tasks/%s/read", taskId);
+        String path = String.format("/back-office-tasks/%s/read", seg(taskId));
         return httpClient.get(path, null, BackOfficeTask.class);
     }
 
@@ -1196,7 +1457,7 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public void deleteBackOfficeTask(String taskId) {
-        String path = String.format("/back-office-tasks/%s", taskId);
+        String path = String.format("/back-office-tasks/%s", seg(taskId));
         httpClient.delete(path, Void.class);
     }
 
@@ -1211,19 +1472,13 @@ public class GradientLabsClient {
      * @throws GradientLabsException if the request fails
      */
     public VoiceCallContext readVoiceCallContext(String phoneNumber, ReadVoiceCallContextRequest request) {
-        StringBuilder path = new StringBuilder(String.format("/voice/latest-call-context/%s", phoneNumber));
+        String path = String.format("/voice/latest-call-context/%s", seg(phoneNumber));
+        Map<String, Object> query = new LinkedHashMap<>();
         if (request != null) {
-            boolean hasParam = false;
-            if (request.getLookbackSeconds() != null) {
-                path.append("?lookback_seconds=").append(request.getLookbackSeconds());
-                hasParam = true;
-            }
-            if (request.getIncludeLargeFields() != null) {
-                path.append(hasParam ? "&" : "?");
-                path.append("include_large_fields=").append(request.getIncludeLargeFields());
-            }
+            query.put("lookback_seconds", request.getLookbackSeconds());
+            query.put("include_large_fields", request.getIncludeLargeFields());
         }
-        return httpClient.get(path.toString(), null, VoiceCallContext.class);
+        return httpClient.get(path, query, VoiceCallContext.class);
     }
 
     // ==================== Webhook Operations ====================
@@ -1259,6 +1514,13 @@ public class GradientLabsClient {
      */
     public void verifyWebhook(HttpServletRequest request) {
         webhookVerifier.verify(request);
+    }
+
+    private record ProcedureLimitResponse(Procedure procedure) {
+    }
+
+    private static String seg(String value) {
+        return HttpClientWrapper.pathSegment(value);
     }
 
     /**

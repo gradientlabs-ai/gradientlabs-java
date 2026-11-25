@@ -12,28 +12,28 @@ import java.time.Instant;
  */
 public class ProcedureVersion {
 
-    @JsonProperty("name")
+    @JsonProperty("Name")
     private String name;
 
-    @JsonProperty("description")
+    @JsonProperty("Description")
     private String description;
 
-    @JsonProperty("version")
+    @JsonProperty("Version")
     private int version;
 
-    @JsonProperty("author")
+    @JsonProperty("Author")
     private String author;
 
-    @JsonProperty("created")
+    @JsonProperty("Created")
     private Instant created;
 
-    @JsonProperty("gated")
+    @JsonProperty("Gated")
     private boolean gated;
 
-    @JsonProperty("gated_config")
+    @JsonProperty("GatedConfig")
     private GatedConfig gatedConfig;
 
-    @JsonProperty("live")
+    @JsonProperty("Live")
     private boolean live;
 
     /**

@@ -106,9 +106,6 @@ public class CreateTrafficGroupTargetRequest {
          * @throws IllegalStateException if required fields are missing
          */
         public CreateTrafficGroupTargetRequest build() {
-            if (groupId == null || groupId.isBlank()) {
-                throw new IllegalStateException("groupId is required");
-            }
             if (targetType == null || targetType.isBlank()) {
                 throw new IllegalStateException("targetType is required");
             }

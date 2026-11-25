@@ -4,15 +4,16 @@ import ai.gradientlabs.client.exception.GradientLabsException;
 import ai.gradientlabs.client.exception.ResponseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * Internal HTTP client wrapper for making API requests.
@@ -22,111 +23,107 @@ import java.util.Map;
 public class HttpClientWrapper {
 
     private final HttpClient httpClient;
+    private final String baseUrl;
     private final String apiKey;
     private final String userAgent;
     private final ObjectMapper objectMapper;
 
-    public HttpClientWrapper(HttpClient httpClient, String apiKey, String userAgent) {
+    /**
+     * Creates a wrapper that sends every request to {@code baseUrl} followed by the request path.
+     *
+     * @param httpClient the underlying HTTP client
+     * @param baseUrl    the API base URL, such as {@code https://api.gradient-labs.ai}
+     * @param apiKey     the API key sent as a bearer token
+     * @param userAgent  the User-Agent header value
+     */
+    public HttpClientWrapper(HttpClient httpClient, String baseUrl, String apiKey, String userAgent) {
         this.httpClient = httpClient;
+        this.baseUrl = stripTrailingSlash(baseUrl == null ? "" : baseUrl);
         this.apiKey = apiKey;
         this.userAgent = userAgent;
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper = Json.newMapper();
     }
 
-    public <T> T get(String path, Object queryParams, Class<T> responseType) {
-        try {
-            HttpRequest request = buildRequest("GET", path, null)
-                    .build();
-
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            return handleResponse(response, responseType);
-        } catch (Exception e) {
-            throw new GradientLabsException("Request failed", e);
-        }
+    /**
+     * Creates a wrapper whose request paths are absolute URLs.
+     *
+     * @param httpClient the underlying HTTP client
+     * @param apiKey     the API key sent as a bearer token
+     * @param userAgent  the User-Agent header value
+     */
+    public HttpClientWrapper(HttpClient httpClient, String apiKey, String userAgent) {
+        this(httpClient, "", apiKey, userAgent);
     }
 
-    public <T> List<T> getList(String path, Object queryParams, Class<T> itemType) {
-        try {
-            HttpRequest request = buildRequest("GET", path, null)
-                    .build();
-
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throw parseError(response);
-            }
-
-            return objectMapper.readValue(
-                    response.body(),
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, itemType)
-            );
-        } catch (ResponseException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new GradientLabsException("Request failed", e);
+    /**
+     * Encodes a value for use as one path segment.
+     *
+     * @param value the raw value
+     * @return the encoded segment
+     */
+    public static String pathSegment(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("path parameter must not be null");
         }
+        return URLEncoder.encode(value, StandardCharsets.UTF_8).replace("+", "%20");
+    }
+
+    public <T> T get(String path, Map<String, ?> queryParams, Class<T> responseType) {
+        return send("GET", withQuery(path, queryParams), null, responseType);
     }
 
     public <T> T post(String path, Object body, Class<T> responseType) {
-        try {
-            HttpRequest request = buildRequest("POST", path, body)
-                    .build();
-
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            return handleResponse(response, responseType);
-        } catch (ResponseException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new GradientLabsException("Request failed", e);
-        }
+        return send("POST", path, body, responseType);
     }
 
     public <T> T put(String path, Object body, Class<T> responseType) {
-        try {
-            HttpRequest request = buildRequest("PUT", path, body)
-                    .build();
-
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            return handleResponse(response, responseType);
-        } catch (ResponseException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new GradientLabsException("Request failed", e);
-        }
+        return send("PUT", path, body, responseType);
     }
 
     public <T> T delete(String path, Class<T> responseType) {
-        try {
-            HttpRequest request = buildRequest("DELETE", path, null)
-                    .build();
+        return send("DELETE", path, null, responseType);
+    }
 
+    public <T> T delete(String path, Map<String, ?> queryParams, Class<T> responseType) {
+        return send("DELETE", withQuery(path, queryParams), null, responseType);
+    }
+
+    private <T> T send(String method, String path, Object body, Class<T> responseType) {
+        try {
+            HttpRequest request = buildRequest(method, path, body).build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return handleResponse(response, responseType);
-        } catch (ResponseException e) {
+        } catch (GradientLabsException e) {
             throw e;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new GradientLabsException("Request interrupted", e);
         } catch (Exception e) {
             throw new GradientLabsException("Request failed", e);
         }
     }
 
-    public <T> T delete(String path, Object body, Class<T> responseType) {
-        try {
-            HttpRequest request = buildRequest("DELETE", path, body)
-                    .build();
-
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            return handleResponse(response, responseType);
-        } catch (ResponseException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new GradientLabsException("Request failed", e);
+    static String withQuery(String path, Map<String, ?> queryParams) {
+        if (queryParams == null || queryParams.isEmpty()) {
+            return path;
         }
+        StringJoiner query = new StringJoiner("&");
+        for (Map.Entry<String, ?> entry : queryParams.entrySet()) {
+            if (entry.getValue() == null) {
+                continue;
+            }
+            query.add(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "="
+                    + URLEncoder.encode(String.valueOf(entry.getValue()), StandardCharsets.UTF_8));
+        }
+        if (query.length() == 0) {
+            return path;
+        }
+        return path + (path.contains("?") ? "&" : "?") + query;
     }
 
     private HttpRequest.Builder buildRequest(String method, String path, Object body) {
         try {
-            URI uri = URI.create(path);
+            URI uri = URI.create(baseUrl + path);
 
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(uri)
@@ -186,5 +183,9 @@ public class HttpClientWrapper {
                     null
             );
         }
+    }
+
+    private static String stripTrailingSlash(String url) {
+        return url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
     }
 }

@@ -3,6 +3,8 @@ package ai.gradientlabs.client.request;
 import ai.gradientlabs.client.model.ResourceHTTPDefinition;
 import ai.gradientlabs.client.model.ResourceWebhookDefinition;
 import ai.gradientlabs.client.model.SourceType;
+import ai.gradientlabs.client.model.ResourceSourceSchemaUpdate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,6 +22,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateResourceSourceRequest {
 
+    @JsonIgnore
     private final String id;
 
     @JsonProperty("display_name")
@@ -41,7 +44,7 @@ public class UpdateResourceSourceRequest {
     private final Map<String, String> attributeDescriptions;
 
     @JsonProperty("schema")
-    private final Object schema;
+    private final ResourceSourceSchemaUpdate schema;
 
     private UpdateResourceSourceRequest(Builder builder) {
         this.id = builder.id;
@@ -93,7 +96,7 @@ public class UpdateResourceSourceRequest {
         return attributeDescriptions;
     }
 
-    public Object getSchema() {
+    public ResourceSourceSchemaUpdate getSchema() {
         return schema;
     }
 
@@ -105,7 +108,7 @@ public class UpdateResourceSourceRequest {
         private ResourceHTTPDefinition httpConfig;
         private ResourceWebhookDefinition webhookConfig;
         private Map<String, String> attributeDescriptions;
-        private Object schema;
+        private ResourceSourceSchemaUpdate schema;
 
         private Builder() {
         }
@@ -196,7 +199,7 @@ public class UpdateResourceSourceRequest {
          * @param schema the schema
          * @return this builder
          */
-        public Builder schema(Object schema) {
+        public Builder schema(ResourceSourceSchemaUpdate schema) {
             this.schema = schema;
             return this;
         }

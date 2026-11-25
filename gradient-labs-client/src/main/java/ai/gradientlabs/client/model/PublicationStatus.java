@@ -3,18 +3,28 @@ package ai.gradientlabs.client.model;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Describes the publication status of a help article or topic.
+ * The publication status of an article or topic.
  */
 public enum PublicationStatus {
     /**
-     * The article or topic is being written or edited and is not published.
+     * Not yet published.
      */
     DRAFT("draft"),
 
     /**
-     * The article or topic is published.
+     * Published.
      */
-    PUBLISHED("published");
+    PUBLISHED("published"),
+
+    /**
+     * Deleted. Only valid for articles.
+     */
+    DELETED("deleted"),
+
+    /**
+     * Excluded from use by the AI agent. Only valid for articles.
+     */
+    EXCLUDED("excluded");
 
     private final String value;
 

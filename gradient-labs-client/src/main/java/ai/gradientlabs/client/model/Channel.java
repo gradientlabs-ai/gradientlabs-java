@@ -16,7 +16,12 @@ public enum Channel {
     /**
      * Email conversation.
      */
-    EMAIL("email");
+    EMAIL("email"),
+
+    /**
+     * Voice (phone) conversation.
+     */
+    VOICE("voice");
 
     private final String value;
 

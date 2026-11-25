@@ -16,6 +16,9 @@ public class HandOffTarget {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("ref")
+    private String ref;
+
     /**
      * Default constructor for Jackson.
      */
@@ -40,6 +43,15 @@ public class HandOffTarget {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Returns the reference used to point to this target from procedures.
+     *
+     * @return the ref
+     */
+    public String getRef() {
+        return ref;
     }
 
     @Override
