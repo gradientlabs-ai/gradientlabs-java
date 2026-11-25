@@ -6,7 +6,7 @@
 
     <groupId>ai.gradient-labs</groupId>
     <artifactId>gradient-labs-parent</artifactId>
-    <version>1.0.2</version>
+    <version>2.0.0</version>
     <packaging>pom</packaging>
 
     <name>Gradient Labs Java SDK</name>
