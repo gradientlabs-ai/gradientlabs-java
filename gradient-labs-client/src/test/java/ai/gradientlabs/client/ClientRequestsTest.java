@@ -126,6 +126,14 @@ class ClientRequestsTest {
     }
 
     @Test
+    void listToolsReturnsEnabledMcpTool() {
+        http.respond(200, "{\"tools\":[{\"id\":\"tool_1\",\"name\":\"lookup\",\"description\":\"Look up an order\",\"parameters\":[],\"mcp\":{\"server_id\":\"mcpserver_1\",\"external_tool_name\":\"lookup_order\"}}]}");
+        Tool tool = client.listTools().get(0);
+        assertEquals("mcpserver_1", tool.getMcp().getServerId());
+        assertEquals("lookup_order", tool.getMcp().getExternalToolName());
+    }
+
+    @Test
     void listToolsAndSubstitutionsReadTheWrappedLists() {
         http.respond(200, "{\"tools\":[{\"id\":\"t1\",\"name\":\"Lookup\",\"parameters\":[{\"name\":\"order_id\","
                 + "\"type\":\"string\",\"allowed_sources\":[\"llm\"]}],\"async\":{\"timeout\":30000000000,"
