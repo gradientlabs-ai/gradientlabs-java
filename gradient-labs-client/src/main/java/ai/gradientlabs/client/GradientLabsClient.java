@@ -380,7 +380,7 @@ public class GradientLabsClient {
     // ==================== Tool Operations ====================
 
     /**
-     * Lists all tools.
+     * Lists company tools and enabled MCP tools. Interactive tools are omitted.
      *
      * @return list of tools
      * @throws GradientLabsException if the request fails
@@ -402,7 +402,7 @@ public class GradientLabsClient {
     }
 
     /**
-     * Retrieves a tool by ID.
+     * Retrieves a tool by ID. Enabled MCP tools can be read by ID. Interactive tools return 404.
      *
      * @param toolId the tool ID
      * @return the tool
@@ -428,7 +428,8 @@ public class GradientLabsClient {
     }
 
     /**
-     * Updates a tool.
+     * Updates a webhook, HTTP, async or draft tool.
+     * Only draft tools can change kind. Edit repository-managed tools in their files.
      *
      * @param toolId  the tool ID
      * @param request the update parameters

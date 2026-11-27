@@ -20,14 +20,14 @@ This starter provides zero-configuration setup for Spring Boot applications usin
 <dependency>
     <groupId>ai.gradient-labs</groupId>
     <artifactId>gradient-labs-spring-boot-starter</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'ai.gradient-labs:gradient-labs-spring-boot-starter:2.0.0'
+implementation 'ai.gradient-labs:gradient-labs-spring-boot-starter:2.0.1'
 ```
 
 ## Configuration
