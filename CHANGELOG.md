@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1
+
+Tool lists include enabled MCP tools. Tool updates support webhook, HTTP, async and draft tools.
+
 ## 2.0.0
 
 Brings the client in line with the public API (contract
