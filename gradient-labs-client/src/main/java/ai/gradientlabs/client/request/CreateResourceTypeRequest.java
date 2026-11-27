@@ -32,7 +32,15 @@ public class CreateResourceTypeRequest {
     @JsonProperty("is_enabled")
     private final Boolean isEnabled;
 
+    @JsonProperty("branch_id")
+    private final String branchId;
+
+    @JsonProperty("branch_name")
+    private final String branchName;
+
     private CreateResourceTypeRequest(Builder builder) {
+        this.branchId = builder.branchId;
+        this.branchName = builder.branchName;
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.scope = builder.scope;
@@ -69,7 +77,27 @@ public class CreateResourceTypeRequest {
         return isEnabled;
     }
 
+    /**
+     * Returns the ID of the branch to create the resource type on.
+     *
+     * @return the branch id
+     */
+    public String getBranchId() {
+        return branchId;
+    }
+
+    /**
+     * Returns the git name of the branch to create the resource type on.
+     *
+     * @return the branch name
+     */
+    public String getBranchName() {
+        return branchName;
+    }
+
     public static class Builder {
+        private String branchId;
+        private String branchName;
         private String displayName;
         private String description;
         private Scope scope;
@@ -143,6 +171,28 @@ public class CreateResourceTypeRequest {
          */
         public Builder isEnabled(Boolean isEnabled) {
             this.isEnabled = isEnabled;
+            return this;
+        }
+
+        /**
+         * Sets the ID of the branch to create the resource type on.
+         *
+         * @param branchId the branch id
+         * @return this builder
+         */
+        public Builder branchId(String branchId) {
+            this.branchId = branchId;
+            return this;
+        }
+
+        /**
+         * Sets the git name of the branch to create the resource type on.
+         *
+         * @param branchName the branch name
+         * @return this builder
+         */
+        public Builder branchName(String branchName) {
+            this.branchName = branchName;
             return this;
         }
 

@@ -3,22 +3,28 @@ package ai.gradientlabs.client.model;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Status of a procedure.
- * <p>
- * Procedures can be in draft mode (saved but not used in real conversations)
- * or live mode (actively used in conversations).
+ * The status of a procedure.
  */
 public enum ProcedureStatus {
     /**
-     * The procedure has been saved as a draft, but won't be used in real
-     * conversations until it is promoted to live.
+     * The procedure has never been saved.
+     */
+    UNSAVED("unsaved"),
+
+    /**
+     * The procedure is a draft and not used by the AI agent.
      */
     DRAFT("draft"),
 
     /**
-     * The procedure is live and will be used in real conversations.
+     * The procedure is live and used by the AI agent.
      */
-    LIVE("live");
+    LIVE("live"),
+
+    /**
+     * The procedure has been archived.
+     */
+    ARCHIVED("archived");
 
     private final String value;
 

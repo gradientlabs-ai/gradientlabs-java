@@ -38,7 +38,7 @@ public class UpsertArticleTopicRequest {
     private final PublicationStatus status;
 
     @JsonProperty("data")
-    private final Map<String, Object> data;
+    private final Object data;
 
     @JsonProperty("created")
     private final Instant created;
@@ -46,7 +46,11 @@ public class UpsertArticleTopicRequest {
     @JsonProperty("last_edited")
     private final Instant lastEdited;
 
+    @JsonProperty("public_url")
+    private final String publicUrl;
+
     private UpsertArticleTopicRequest(Builder builder) {
+        this.publicUrl = builder.publicUrl;
         this.id = builder.id;
         this.parentId = builder.parentId;
         this.name = builder.name;
@@ -86,7 +90,7 @@ public class UpsertArticleTopicRequest {
         return status;
     }
 
-    public Map<String, Object> getData() {
+    public Object getData() {
         return data;
     }
 
@@ -98,14 +102,24 @@ public class UpsertArticleTopicRequest {
         return lastEdited;
     }
 
+    /**
+     * Returns the topic's public web address.
+     *
+     * @return the public url
+     */
+    public String getPublicUrl() {
+        return publicUrl;
+    }
+
     public static class Builder {
+        private String publicUrl;
         private String id;
         private String parentId;
         private String name;
         private String description;
         private Visibility visibility;
         private PublicationStatus status;
-        private Map<String, Object> data;
+        private Object data;
         private Instant created;
         private Instant lastEdited;
 
@@ -174,7 +188,7 @@ public class UpsertArticleTopicRequest {
         }
 
         /**
-         * Sets whether this topic is published or a draft (required).
+         * Sets the publication status. This has no effect on topics.
          *
          * @param status the publication status
          * @return this builder
@@ -187,10 +201,10 @@ public class UpsertArticleTopicRequest {
         /**
          * Sets additional metadata about the topic (optional).
          *
-         * @param data the metadata map
+         * @param data the JSON value
          * @return this builder
          */
-        public Builder data(Map<String, Object> data) {
+        public Builder data(Object data) {
             this.data = data;
             return this;
         }
@@ -203,10 +217,13 @@ public class UpsertArticleTopicRequest {
          * @return this builder
          */
         public Builder addData(String key, Object value) {
-            if (this.data == null) {
-                this.data = new HashMap<>();
+            if (data != null && !(data instanceof Map<?, ?>)) {
+                throw new IllegalStateException("Adding a field requires object data");
             }
-            this.data.put(key, value);
+            Map<Object, Object> fields = data instanceof Map<?, ?> existing
+                    ? new HashMap<>(existing) : new HashMap<>();
+            fields.put(key, value);
+            data = fields;
             return this;
         }
 
@@ -233,6 +250,17 @@ public class UpsertArticleTopicRequest {
         }
 
         /**
+         * Sets the topic's public web address.
+         *
+         * @param publicUrl the public url
+         * @return this builder
+         */
+        public Builder publicUrl(String publicUrl) {
+            this.publicUrl = publicUrl;
+            return this;
+        }
+
+        /**
          * Builds the request.
          *
          * @return a new request instance
@@ -247,9 +275,6 @@ public class UpsertArticleTopicRequest {
             }
             if (visibility == null) {
                 throw new IllegalStateException("visibility is required");
-            }
-            if (status == null) {
-                throw new IllegalStateException("status is required");
             }
             if (created == null) {
                 throw new IllegalStateException("created is required");

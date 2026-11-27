@@ -3,6 +3,8 @@ package ai.gradientlabs.client.request;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.Instant;
+
 /**
  * Parameters for finishing a conversation.
  */
@@ -15,7 +17,11 @@ public class FinishConversationRequest {
     @JsonProperty("reason_code")
     private final String reasonCode;
 
+    @JsonProperty("timestamp")
+    private final Instant timestamp;
+
     private FinishConversationRequest(Builder builder) {
+        this.timestamp = builder.timestamp;
         this.reason = builder.reason;
         this.reasonCode = builder.reasonCode;
     }
@@ -36,7 +42,17 @@ public class FinishConversationRequest {
         return reasonCode;
     }
 
+    /**
+     * Returns when the conversation finished. Defaults to now.
+     *
+     * @return the timestamp
+     */
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+
     public static class Builder {
+        private Instant timestamp;
         private String reason;
         private String reasonCode;
 
@@ -50,6 +66,17 @@ public class FinishConversationRequest {
 
         public Builder reasonCode(String reasonCode) {
             this.reasonCode = reasonCode;
+            return this;
+        }
+
+        /**
+         * Sets when the conversation finished. Defaults to now.
+         *
+         * @param timestamp the timestamp
+         * @return this builder
+         */
+        public Builder timestamp(Instant timestamp) {
+            this.timestamp = timestamp;
             return this;
         }
 

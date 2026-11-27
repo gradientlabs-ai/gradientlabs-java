@@ -2,6 +2,7 @@ package ai.gradientlabs.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
 import java.time.Instant;
 import java.util.Map;
 
@@ -39,6 +40,15 @@ public class ResourceSource {
 
     @JsonProperty("updated")
     private Instant updated;
+
+    @JsonProperty("available_refresh_strategies")
+    private List<RefreshStrategy> availableRefreshStrategies;
+
+    @JsonProperty("available_scopes")
+    private List<Scope> availableScopes;
+
+    @JsonProperty("managed")
+    private ManagedResourceSource managed;
 
     /**
      * Default constructor for Jackson.
@@ -224,5 +234,32 @@ public class ResourceSource {
      */
     public void setUpdated(Instant updated) {
         this.updated = updated;
+    }
+
+    /**
+     * Returns the refresh strategies resource types using this source may choose.
+     *
+     * @return the available refresh strategies
+     */
+    public List<RefreshStrategy> getAvailableRefreshStrategies() {
+        return availableRefreshStrategies;
+    }
+
+    /**
+     * Returns the scopes resource types using this source may choose.
+     *
+     * @return the available scopes
+     */
+    public List<Scope> getAvailableScopes() {
+        return availableScopes;
+    }
+
+    /**
+     * Returns details of the managed source, if Gradient Labs manages it.
+     *
+     * @return the managed
+     */
+    public ManagedResourceSource getManaged() {
+        return managed;
     }
 }

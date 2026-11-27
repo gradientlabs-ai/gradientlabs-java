@@ -21,6 +21,9 @@ public class TrafficGroup {
     @JsonProperty("targets")
     private List<TrafficGroupTarget> targets;
 
+    @JsonProperty("excluded_targets")
+    private List<TrafficGroupTarget> excludedTargets;
+
     /**
      * Default constructor for Jackson.
      */
@@ -52,6 +55,15 @@ public class TrafficGroup {
      */
     public List<TrafficGroupTarget> getTargets() {
         return targets;
+    }
+
+    /**
+     * Returns the targets excluded from this traffic group.
+     *
+     * @return the excluded targets
+     */
+    public List<TrafficGroupTarget> getExcludedTargets() {
+        return excludedTargets;
     }
 
     @Override

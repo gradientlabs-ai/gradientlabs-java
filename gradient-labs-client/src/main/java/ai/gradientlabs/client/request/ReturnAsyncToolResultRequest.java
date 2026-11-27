@@ -2,9 +2,9 @@ package ai.gradientlabs.client.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.node.NullNode;
 
 import java.time.Instant;
-import java.util.Map;
 
 /**
  * Parameters for returning an async tool execution result.
@@ -23,7 +23,7 @@ public class ReturnAsyncToolResultRequest {
     private final String asyncToolExecutionId;
 
     @JsonProperty("payload")
-    private final Map<String, Object> payload;
+    private final Object payload;
 
     @JsonProperty("timestamp")
     private final Instant timestamp;
@@ -42,7 +42,7 @@ public class ReturnAsyncToolResultRequest {
         return asyncToolExecutionId;
     }
 
-    public Map<String, Object> getPayload() {
+    public Object getPayload() {
         return payload;
     }
 
@@ -52,7 +52,7 @@ public class ReturnAsyncToolResultRequest {
 
     public static class Builder {
         private String asyncToolExecutionId;
-        private Map<String, Object> payload;
+        private Object payload;
         private Instant timestamp;
 
         private Builder() {
@@ -80,8 +80,8 @@ public class ReturnAsyncToolResultRequest {
          * @param payload the result payload
          * @return this builder
          */
-        public Builder payload(Map<String, Object> payload) {
-            this.payload = payload;
+        public Builder payload(Object payload) {
+            this.payload = payload == null ? NullNode.getInstance() : payload;
             return this;
         }
 

@@ -2,14 +2,14 @@ package ai.gradientlabs.client.webhook;
 
 import ai.gradientlabs.client.exception.GradientLabsException;
 import ai.gradientlabs.client.exception.InvalidWebhookSignatureException;
+import ai.gradientlabs.client.internal.Json;
 import ai.gradientlabs.client.webhook.event.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.servlet.http.HttpServletRequest;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -42,8 +42,7 @@ public class WebhookVerifier {
     public WebhookVerifier(String signingKey, Duration leeway) {
         this.secret = signingKey.getBytes(StandardCharsets.UTF_8);
         this.leeway = leeway;
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper = Json.newMapper();
     }
 
     /**
@@ -187,9 +186,7 @@ public class WebhookVerifier {
             Webhook webhook = new Webhook();
 
             webhook.setId(root.get("id").asText());
-            webhook.setType(WebhookType.valueOf(
-                    root.get("type").asText().replace(".", "_").toUpperCase()
-            ));
+            webhook.setType(WebhookType.fromValue(root.path("type").asText()));
             webhook.setSequenceNumber(root.get("sequence_number").asInt());
             webhook.setTimestamp(Instant.parse(root.get("timestamp").asText()));
 
@@ -215,8 +212,16 @@ public class WebhookVerifier {
                 return objectMapper.treeToValue(dataNode, ActionExecuteEvent.class);
             case RESOURCE_PULL:
                 return objectMapper.treeToValue(dataNode, ResourcePullEvent.class);
+            case CONVERSATION_START:
+                return objectMapper.treeToValue(dataNode, ConversationStartEvent.class);
+            case BACK_OFFICE_TASK_COMPLETE:
+                return objectMapper.treeToValue(dataNode, BackOfficeTaskCompleteEvent.class);
+            case BACK_OFFICE_TASK_HAND_OFF:
+                return objectMapper.treeToValue(dataNode, BackOfficeTaskHandOffEvent.class);
+            case BACK_OFFICE_TASK_FAIL:
+                return objectMapper.treeToValue(dataNode, BackOfficeTaskFailEvent.class);
             default:
-                throw new GradientLabsException("Unknown webhook type: " + type);
+                return dataNode;
         }
     }
 

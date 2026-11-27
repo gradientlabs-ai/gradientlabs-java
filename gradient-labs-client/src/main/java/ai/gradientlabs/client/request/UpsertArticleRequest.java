@@ -5,6 +5,7 @@ import ai.gradientlabs.client.model.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class UpsertArticleRequest {
     private final PublicationStatus status;
 
     @JsonProperty("data")
-    private final Map<String, Object> data;
+    private final Object data;
 
     @JsonProperty("created")
     private final Instant created;
@@ -52,7 +53,15 @@ public class UpsertArticleRequest {
     @JsonProperty("last_edited")
     private final Instant lastEdited;
 
+    @JsonProperty("knowledge_base_ids")
+    private final List<String> knowledgeBaseIds;
+
+    @JsonProperty("public_url")
+    private final String publicUrl;
+
     private UpsertArticleRequest(Builder builder) {
+        this.knowledgeBaseIds = builder.knowledgeBaseIds;
+        this.publicUrl = builder.publicUrl;
         this.authorId = builder.authorId;
         this.id = builder.id;
         this.title = builder.title;
@@ -102,7 +111,7 @@ public class UpsertArticleRequest {
         return status;
     }
 
-    public Map<String, Object> getData() {
+    public Object getData() {
         return data;
     }
 
@@ -114,7 +123,27 @@ public class UpsertArticleRequest {
         return lastEdited;
     }
 
+    /**
+     * Returns your IDs of the knowledge bases the article belongs to.
+     *
+     * @return the knowledge base ids
+     */
+    public List<String> getKnowledgeBaseIds() {
+        return knowledgeBaseIds;
+    }
+
+    /**
+     * Returns the article's public web address.
+     *
+     * @return the public url
+     */
+    public String getPublicUrl() {
+        return publicUrl;
+    }
+
     public static class Builder {
+        private List<String> knowledgeBaseIds;
+        private String publicUrl;
         private String authorId;
         private String id;
         private String title;
@@ -123,7 +152,7 @@ public class UpsertArticleRequest {
         private Visibility visibility;
         private String topicId;
         private PublicationStatus status;
-        private Map<String, Object> data;
+        private Object data;
         private Instant created;
         private Instant lastEdited;
 
@@ -234,10 +263,10 @@ public class UpsertArticleRequest {
         /**
          * Sets additional metadata about the article (optional).
          *
-         * @param data the metadata map
+         * @param data the JSON value
          * @return this builder
          */
-        public Builder data(Map<String, Object> data) {
+        public Builder data(Object data) {
             this.data = data;
             return this;
         }
@@ -250,10 +279,13 @@ public class UpsertArticleRequest {
          * @return this builder
          */
         public Builder addData(String key, Object value) {
-            if (this.data == null) {
-                this.data = new HashMap<>();
+            if (data != null && !(data instanceof Map<?, ?>)) {
+                throw new IllegalStateException("Adding a field requires object data");
             }
-            this.data.put(key, value);
+            Map<Object, Object> fields = data instanceof Map<?, ?> existing
+                    ? new HashMap<>(existing) : new HashMap<>();
+            fields.put(key, value);
+            data = fields;
             return this;
         }
 
@@ -276,6 +308,28 @@ public class UpsertArticleRequest {
          */
         public Builder lastEdited(Instant lastEdited) {
             this.lastEdited = lastEdited;
+            return this;
+        }
+
+        /**
+         * Sets your IDs of the knowledge bases the article belongs to.
+         *
+         * @param knowledgeBaseIds the knowledge base ids
+         * @return this builder
+         */
+        public Builder knowledgeBaseIds(List<String> knowledgeBaseIds) {
+            this.knowledgeBaseIds = knowledgeBaseIds;
+            return this;
+        }
+
+        /**
+         * Sets the article's public web address.
+         *
+         * @param publicUrl the public url
+         * @return this builder
+         */
+        public Builder publicUrl(String publicUrl) {
+            this.publicUrl = publicUrl;
             return this;
         }
 

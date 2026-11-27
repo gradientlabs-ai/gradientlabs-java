@@ -110,11 +110,6 @@ public class ConversationController {
                     // Execute the requested action
                     break;
 
-                case RESOURCE_PULL:
-                    System.out.println("Resource pull event received");
-                    // Fetch and return requested resource
-                    break;
-
                 default:
                     System.out.println("Unknown webhook type: " + webhook.getType());
             }

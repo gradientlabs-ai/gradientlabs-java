@@ -9,17 +9,22 @@ public enum ParticipantType {
     /**
      * The customer.
      */
-    CUSTOMER("customer"),
+    CUSTOMER("Customer"),
 
     /**
      * A human agent.
      */
-    HUMAN("human"),
+    AGENT("Agent"),
 
     /**
-     * The AI agent.
+     * The Gradient Labs AI agent.
      */
-    AI_AGENT("ai_agent");
+    AI_AGENT("AI Agent"),
+
+    /**
+     * An automated system other than the Gradient Labs AI agent, such as a chatbot.
+     */
+    BOT("Bot");
 
     private final String value;
 

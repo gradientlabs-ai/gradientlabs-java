@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Event data for an {@code action.execute} webhook.
  * <p>
- * Indicates the agent needs an action to be executed (e.g., while following a procedure).
+ * Sent when the agent calls a webhook tool or reads a webhook resource source.
  */
 public class ActionExecuteEvent {
 
@@ -18,6 +18,9 @@ public class ActionExecuteEvent {
 
     @JsonProperty("conversation")
     private WebhookConversation conversation;
+
+    @JsonProperty("back_office_task")
+    private WebhookBackOfficeTask backOfficeTask;
 
     /**
      * Default constructor for Jackson.
@@ -52,6 +55,15 @@ public class ActionExecuteEvent {
      */
     public WebhookConversation getConversation() {
         return conversation;
+    }
+
+    /**
+     * Returns the back-office task the action is for. Null when it is for a conversation.
+     *
+     * @return the back office task
+     */
+    public WebhookBackOfficeTask getBackOfficeTask() {
+        return backOfficeTask;
     }
 
     @Override

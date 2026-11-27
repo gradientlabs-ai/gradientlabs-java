@@ -2,6 +2,7 @@ package ai.gradientlabs.client.request;
 
 import ai.gradientlabs.client.model.SchemaUpdateStrategy;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateResourceSourceSchemaByExamplesRequest {
 
+    @JsonIgnore
     private final String id;
 
     @JsonProperty("examples")
@@ -65,7 +67,7 @@ public class UpdateResourceSourceSchemaByExamplesRequest {
         }
 
         /**
-         * Sets the unique identifier for the resource source to update (required).
+         * Sets the unique identifier for the resource source to update when calling the single-argument method.
          *
          * @param id the resource source ID
          * @return this builder
@@ -106,9 +108,6 @@ public class UpdateResourceSourceSchemaByExamplesRequest {
          * @throws IllegalStateException if required fields are missing
          */
         public UpdateResourceSourceSchemaByExamplesRequest build() {
-            if (id == null || id.isBlank()) {
-                throw new IllegalStateException("id is required");
-            }
             if (examples == null || examples.isEmpty()) {
                 throw new IllegalStateException("examples is required and cannot be empty");
             }

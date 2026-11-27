@@ -100,7 +100,6 @@ StartConversationRequest request = StartConversationRequest.builder()
     .id("conversation-1234")
     .customerId("user-1234")
     .channel(Channel.CHAT)
-    .metadata(Map.of("source", "web"))
     .build();
 
 Conversation conv = client.startConversation(request);

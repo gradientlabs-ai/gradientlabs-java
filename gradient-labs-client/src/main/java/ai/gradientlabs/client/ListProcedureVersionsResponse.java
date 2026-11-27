@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class ListProcedureVersionsResponse {
 
-    @JsonProperty("versions")
+    @JsonProperty("Versions")
     private List<ProcedureVersion> versions;
 
     /**

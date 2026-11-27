@@ -2,6 +2,8 @@ package ai.gradientlabs.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+import java.util.List;
 import java.time.Instant;
 
 /**
@@ -41,6 +43,9 @@ public class Note {
 
     @JsonProperty("status")
     private NoteStatus status;
+
+    @JsonProperty("attributes")
+    private Map<String, List<String>> attributes;
 
     /**
      * Default constructor for Jackson.
@@ -147,6 +152,15 @@ public class Note {
      */
     public NoteStatus getStatus() {
         return status;
+    }
+
+    /**
+     * Returns the note's attributes, by attribute name.
+     *
+     * @return the attributes
+     */
+    public Map<String, List<String>> getAttributes() {
+        return attributes;
     }
 
     @Override

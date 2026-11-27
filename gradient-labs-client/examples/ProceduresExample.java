@@ -82,7 +82,6 @@ public class ProceduresExample {
             System.out.println("Name: " + proc.getName());
             System.out.println("Description: " + proc.getDescription());
             System.out.println("Status: " + proc.getStatus());
-            System.out.println("Author: " + (proc.getAuthor() != null ? proc.getAuthor().getEmail() : "N/A"));
             System.out.println("Created: " + proc.getCreated());
             System.out.println("Updated: " + proc.getUpdated());
             System.out.println("Has Daily Limit: " + proc.isDailyLimited());

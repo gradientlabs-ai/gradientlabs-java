@@ -43,7 +43,6 @@ public class ConversationService {
                 .id("conv-" + UUID.randomUUID())
                 .customerId(customerId)
                 .channel(Channel.CHAT)
-                .addMetadata("source", "spring-boot-example")
                 .build();
 
         return client.startConversation(request);

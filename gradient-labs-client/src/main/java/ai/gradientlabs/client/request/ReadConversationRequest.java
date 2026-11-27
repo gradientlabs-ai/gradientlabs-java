@@ -1,19 +1,14 @@
 package ai.gradientlabs.client.request;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
- * Parameters for reading a conversation.
+ * Optional parameters for reading a conversation.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReadConversationRequest {
 
-    @JsonProperty("include_messages")
-    private final Boolean includeMessages;
+    private final String supportPlatform;
 
     private ReadConversationRequest(Builder builder) {
-        this.includeMessages = builder.includeMessages;
+        this.supportPlatform = builder.supportPlatform;
     }
 
     public static Builder builder() {
@@ -24,18 +19,30 @@ public class ReadConversationRequest {
         return builder().build();
     }
 
-    public Boolean getIncludeMessages() {
-        return includeMessages;
+    /**
+     * Returns the support platform the conversation ID belongs to, or null for the public API.
+     *
+     * @return the support platform
+     */
+    public String getSupportPlatform() {
+        return supportPlatform;
     }
 
     public static class Builder {
-        private Boolean includeMessages;
+        private String supportPlatform;
 
         private Builder() {
         }
 
-        public Builder includeMessages(boolean includeMessages) {
-            this.includeMessages = includeMessages;
+        /**
+         * Reads a conversation by its ID on another support platform, such as {@code intercom},
+         * instead of its public API ID.
+         *
+         * @param supportPlatform the support platform
+         * @return this builder
+         */
+        public Builder supportPlatform(String supportPlatform) {
+            this.supportPlatform = supportPlatform;
             return this;
         }
 

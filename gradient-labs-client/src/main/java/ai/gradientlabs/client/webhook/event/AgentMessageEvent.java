@@ -24,6 +24,12 @@ public class AgentMessageEvent {
     @JsonProperty("intent")
     private String intent;
 
+    @JsonProperty("is_holding")
+    private Boolean isHolding;
+
+    @JsonProperty("last_customer_message_id")
+    private String lastCustomerMessageId;
+
     /**
      * Default constructor for Jackson.
      */
@@ -73,6 +79,24 @@ public class AgentMessageEvent {
      */
     public String getIntent() {
         return intent;
+    }
+
+    /**
+     * Returns whether this is a holding message sent while the agent works on a reply.
+     *
+     * @return the is holding
+     */
+    public Boolean getIsHolding() {
+        return isHolding;
+    }
+
+    /**
+     * Returns the ID of the last customer message the agent saw.
+     *
+     * @return the last customer message id
+     */
+    public String getLastCustomerMessageId() {
+        return lastCustomerMessageId;
     }
 
     @Override

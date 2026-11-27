@@ -2,6 +2,7 @@ package ai.gradientlabs.client.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.node.NullNode;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class CreateBackOfficeTaskRequest {
     private final String procedureId;
 
     @JsonProperty("input")
-    private final Map<String, Object> input;
+    private final Object input;
 
     @JsonProperty("created")
     private final Instant created;
@@ -65,7 +66,7 @@ public class CreateBackOfficeTaskRequest {
         @JsonProperty("url")
         private final String url;
 
-        @JsonProperty("base64_contents")
+        @JsonProperty("base_64_contents")
         private final String base64Contents;
 
         private Attachment(String fileName, String url, String base64Contents) {
@@ -112,7 +113,7 @@ public class CreateBackOfficeTaskRequest {
         return procedureId;
     }
 
-    public Map<String, Object> getInput() {
+    public Object getInput() {
         return input;
     }
 
@@ -132,7 +133,7 @@ public class CreateBackOfficeTaskRequest {
         private String id;
         private String agentId;
         private String procedureId;
-        private Map<String, Object> input;
+        private Object input;
         private Instant created;
         private Map<String, String> metadata;
         private List<Attachment> attachments;
@@ -183,8 +184,8 @@ public class CreateBackOfficeTaskRequest {
          * @param input the task input
          * @return this builder
          */
-        public Builder input(Map<String, Object> input) {
-            this.input = input;
+        public Builder input(Object input) {
+            this.input = input == null ? NullNode.getInstance() : input;
             return this;
         }
 

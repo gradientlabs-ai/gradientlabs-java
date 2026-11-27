@@ -99,6 +99,9 @@ public class EventRequest {
             if (type == null) {
                 throw new IllegalStateException("type is required");
             }
+            if (type == ConversationEventType.INTERNAL_NOTE && (body == null || body.isEmpty())) {
+                throw new IllegalStateException("body is required for an internal note");
+            }
             if (participantId == null || participantId.isBlank()) {
                 throw new IllegalStateException("participantId is required");
             }

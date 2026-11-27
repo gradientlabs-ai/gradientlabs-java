@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class ListTopicsResponse {
 
-    @JsonProperty("topics")
+    @JsonProperty("Topics")
     private List<Topic> topics;
 
     /**

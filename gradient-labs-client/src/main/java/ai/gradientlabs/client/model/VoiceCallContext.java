@@ -30,6 +30,9 @@ public class VoiceCallContext {
     @JsonProperty("gradient_labs_url")
     private String gradientLabsUrl;
 
+    @JsonProperty("live_handoff_url")
+    private String liveHandoffUrl;
+
     public Instant getStartedAt() {
         return startedAt;
     }
@@ -56,5 +59,14 @@ public class VoiceCallContext {
 
     public String getGradientLabsUrl() {
         return gradientLabsUrl;
+    }
+
+    /**
+     * Returns the URL of the live hand-off view for the call.
+     *
+     * @return the live handoff url
+     */
+    public String getLiveHandoffUrl() {
+        return liveHandoffUrl;
     }
 }

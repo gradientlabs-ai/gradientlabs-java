@@ -3,6 +3,7 @@ package ai.gradientlabs.client.request;
 import ai.gradientlabs.client.model.RefreshStrategy;
 import ai.gradientlabs.client.model.Scope;
 import ai.gradientlabs.client.model.SourceConfig;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateResourceTypeRequest {
 
+    @JsonIgnore
     private final String id;
 
     @JsonProperty("display_name")
